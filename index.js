@@ -15,3 +15,5 @@ function hold() {
     return false;
   };
 };
+
+window.onload = hold;
