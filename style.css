@@ -172,3 +172,7 @@ input[type="checkbox"] {
   padding-bottom: 5px;
   padding-right: 10px;
 }
+
+.hidden {
+  display: none;
+}
