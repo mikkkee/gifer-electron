@@ -1,5 +1,5 @@
 # gifer-electron
-GIF maker with electron
+GIF maker built with electron
 
 
 # Play with gifer-electron
