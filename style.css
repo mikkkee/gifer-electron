@@ -1,178 +1,175 @@
 @font-face {
     font-family: 'Lato';
     src: url('resources/fonts/Lato-Regular.woff2') format('woff2'), /* Modern Browsers */
-         url('resources/fonts/Lato-Regular.woff') format('woff'), /* Modern Browsers */
-         url('resources/fonts/Lato-Regular.ttf') format('truetype');
+    url('resources/fonts/Lato-Regular.woff') format('woff'), /* Modern Browsers */
+    url('resources/fonts/Lato-Regular.ttf') format('truetype');
     font-style: normal;
     font-weight: normal;
     text-rendering: optimizeLegibility;
 }
 
-html{
-  height: 100%;
-  margin: 0px;
+html {
+    height: 100%;
+    margin: 0px;
 }
 
 body {
-  background-color: #2e3239;
-  color: #bbb;
-  height: calc(100% - 10px);
-  margin: 0px;
-  padding: 5px;
-  font-family: Lato, 'Helvetica Neue',Helvetica,Arial,Verdana,sans-serif;
+    background-color: #2e3239;
+    color: #bbb;
+    height: calc(100% - 10px);
+    margin: 0px;
+    padding: 5px;
+    font-family: Lato, 'Helvetica Neue', Helvetica, Arial, Verdana, sans-serif;
 }
 
 input[type="text"] {
-  background-color: #2e3239;
-  border: 1px solid #65737e;
-  color: #aaa;
-  -webkit-transition: all 0.30s ease-in-out;
-  -moz-transition: all 0.30s ease-in-out;
-  -ms-transition: all 0.30s ease-in-out;
-  -o-transition: all 0.30s ease-in-out;
-  outline: none;
-  padding: 5px 5px;
+    background-color: #2e3239;
+    border: 1px solid #65737e;
+    color: #aaa;
+    -webkit-transition: all 0.30s ease-in-out;
+    -moz-transition: all 0.30s ease-in-out;
+    -ms-transition: all 0.30s ease-in-out;
+    -o-transition: all 0.30s ease-in-out;
+    outline: none;
+    padding: 5px 5px;
 }
 
 input[type="text"]:focus {
-  box-shadow: 0 0 5px #8fa1b3;
-  /** #4f5b66; **/
+    box-shadow: 0 0 5px #8fa1b3;
+    /** #4f5b66; **/
 }
 
 input[type="text"]:disabled {
-  cursor: not-allowed;
+    cursor: not-allowed;
 }
 
 input[type="checkbox"] {
-  visibility: hidden;
+    visibility: hidden;
 }
 
 .checkbox-round {
-  width: 21px;
-  height: 21px;
-  background: #65737e;
-
-  border-radius: 100%;
-  position: relative;
-  box-shadow: 0px 0px 3px rgba(0,0,0,0.5);
-  float: right;
+    width: 21px;
+    height: 21px;
+    background: #65737e;
+    border-radius: 100%;
+    position: relative;
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+    float: right;
 }
 
 .checkbox-round label {
-  display: block;
-  width: 15px;
-  height: 15px;
-  border-radius: 100%;
-
-  transition: all .3s ease;
-  cursor: pointer;
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  z-index: 1;
-
-  background: #4f5b66;
-  box-shadow:inset 0px 0px 3px rgba(0,0,0,0.5);
+    display: block;
+    width: 15px;
+    height: 15px;
+    border-radius: 100%;
+    transition: all .3s ease;
+    cursor: pointer;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    z-index: 1;
+    background: #4f5b66;
+    box-shadow: inset 0px 0px 3px rgba(0, 0, 0, 0.5);
 }
 
 .checkbox-round input[type="checkbox"]:checked + label {
-  background: #d08770;
+    background: #d08770;
 }
 
 .button {
-  background-color: #2e3239;
-  border: none;
-  border-radius: 5px;
-  color: #c3c3c3;
-  padding: 15px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
+    background-color: #2e3239;
+    border: none;
+    border-radius: 5px;
+    color: #c3c3c3;
+    padding: 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
 }
 
 .button:hover {
-  background-color: white;
-  color: #aaa;
-  cursor: pointer;
+    background-color: white;
+    color: #aaa;
+    cursor: pointer;
 }
 
 .button:active {
-  box-shadow: 0 0 5px #fff;
+    box-shadow: 0 0 5px #fff;
 }
 
 .button-blue {
-  outline: none;
-  border: 1px solid #56bff5;
-  background-color: #56bff5;
-  color: white;
+    outline: none;
+    border: 1px solid #56bff5;
+    background-color: #56bff5;
+    color: white;
 }
 
 .button-blue:hover {
-  color: white;
-  background-color: #06a1f1;
-  border: 1px solid #06a1f1;
+    color: white;
+    background-color: #06a1f1;
+    border: 1px solid #06a1f1;
 }
 
 .button-blue-outline {
-  outline: none;
-  color: #56bff5;
-  border: 1px solid #56bff5;
+    outline: none;
+    color: #56bff5;
+    border: 1px solid #56bff5;
 }
 
 .button-blue-outline:hover {
-  color: #56bff5;
-  background-color: white;
-  border: 1px solid #56bff5;
+    color: #56bff5;
+    background-color: white;
+    border: 1px solid #56bff5;
 }
 
 .buttons-area {
-  margin-top: 10px;
+    margin-top: 10px;
 }
 
 #holder {
-  height: 60%;
-  width: 100%;
-  background-color: #333;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    height: 60%;
+    width: 100%;
+    background-color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #drag-text {
-  height: 50px;
-  width: 200px;
+    height: 50px;
+    width: 200px;
 }
 
 .wrapper {
-  height: 100%;
+    height: 100%;
 }
 
 .options-wrapper {
-  margin-top: 25px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 5px 20px;
-  max-width: 800px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    margin-top: 25px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5px 20px;
+    max-width: 800px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .option-cell {
-  padding: 5px 0px 5px 0px;
+    padding: 5px 0px 5px 0px;
 }
 
 .option-label {
-  font-size: 14px;
-  line-height: 21px;
-  text-align: right;
-  vertical-align: center;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-right: 10px;
+    font-size: 14px;
+    line-height: 21px;
+    text-align: right;
+    vertical-align: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 10px;
 }
 
 .hidden {
-  display: none;
+    display: none;
 }
