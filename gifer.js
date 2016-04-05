@@ -1,13 +1,14 @@
 'use strict';
 
 function init() {
-
     // Drag and Drop holder.
     const holder = document.getElementById('holder');
+    // Placehold text in holder.
     const dragText = document.getElementById('drag-text');
 
     holder.ondragover = function() {
-        return false; };
+        return false;
+    };
 
     holder.ondragleave = holder.ondragend = function() {
         return false;
