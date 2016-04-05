@@ -21,9 +21,11 @@
   },
   "homepage": "https://github.com/mikkkee/gifer-electron",
   "devDependencies": {
-    "electron-prebuilt": "^0.36.0"
+    "electron-prebuilt": "^0.36.0",
+    "grd": "^1.2.3"
   },
   "dependencies": {
+    "electron-prebuilt": "^0.36.0",
     "grd": "^1.2.3"
   }
 }
