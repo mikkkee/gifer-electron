@@ -14,17 +14,22 @@ const videoClip = {
       fps: 0.0,
       speed: 1.0,
       ratio: 0.0,    // initWidth / initHeight.
-      updateWidth: function (h) {
-        this.width = this.ratio * h;
+      setWidth: function (w) {
+        // Set width to w and keep aspect ratio unchanged.
+        this.width = w;
+        this.height = this.width / this.ratio;
         return this;
       },
-      updateHeight: function (w) {
-        this.height = w / this.ratio;
+      setHeight: function (h) {
+        // Set Height to h and keep aspect ratio unchanged.
+        this.height = h;
+        this.weight = this.height * this.ratio;
         return this;
       },
-      updateWidthAndHeight: function (s) {
-        this.width = this.initWidth * s;
-        this.height = this.initHeight * s;
+      setScale: function (s) {
+        this.scale = s;
+        this.width = this.initWidth * this.scale;
+        this.height = this.initHeight * this.scale;
         return this;
       }
     };
