@@ -1,59 +1,55 @@
 'use strict';
 
 const videoClip = require('./movie.js');
-
-function bindUI() {
-  // Bind options to videoClip file.
-}
-
-function reset() {
-  // Reset options to values of video file.
-}
+let video;
 
 function init() {
-  // Disable drag + drop event for document.
-  document.addEventListener('dragover', function(event) {
-    event.preventDefault();
-    return false;
-  }, false);
-  document.addEventListener('drop', function(event) {
-    event.preventDefault();
-    return false;
-  }, false);
+  video = document.querySelector('video');
+  bindEvents();
+}
+
+function bindEvents() {
   // Drag and Drop holder.
   const holder = document.getElementById('holder');
   // Placehold text in holder.
   const dragText = document.getElementById('drag-text');
+  // Disable drag and drop event for document.
+  document.addEventListener('dragover', idle, false);
+  document.addEventListener('drop', idle, false);
 
-  holder.ondragover = function() {
-    return false;
-  };
+  holder.ondragover = idle;
+  holder.ondragleave = holder.ondragend = idle;
+  holder.ondrop = loadVideo;
+}
 
-  holder.ondragleave = holder.ondragend = function() {
-    return false;
-  };
+function idle(e) {
+  e.preventDefault();
+  return false;
+}
 
-  holder.ondrop = function(e) {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    console.log('File you dragged here is', file.path);
-    videoClip.video = file.path;
-    // Remove exitng video.
-    const existingVideo = holder.getElementsByTagName('video')[0];
-    if (existingVideo) { existingVideo.remove(); };
+function videoError(msg) {
+  console.log(msg);
+}
 
-    dragText.className += ' hidden';
+function loadVideo(e) {
+  e.preventDefault();
 
-    const video = document.createElement("video");
-    video.setAttribute('controls', '');
-    video.setAttribute("width", '100%');
-    video.setAttribute('height', '100%');
-    const source = document.createElement("source");
-    source.setAttribute('src', file.path);
-    video.appendChild(source);
-    holder.appendChild(video);
-    return true;
-  };
+  const dragText = document.getElementById('drag-text');
+  const file = e.dataTransfer.files[0];
+
+  console.log('File you dragged here is ', file.path);
+  videoClip.video = file.path;
+
+  video.src = file.path;
+  dragText.className += ' hidden';
+  video.classList.remove('hidden');
+  setTimeout(function() {
+    if (!video.videoWidth) videoError('Cannot play video');
+  }, 200);
+}
+
+function reset() {
+  // Reset options to values of video file.
 }
 
 window.onload = init;

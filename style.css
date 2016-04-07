@@ -22,6 +22,11 @@ body {
   font-family: Lato, 'Helvetica Neue', Helvetica, Arial, Verdana, sans-serif;
 }
 
+video {
+  height: 100%;
+  width: 100%;
+}
+
 input[type="text"] {
   background-color: #2e3239;
   border: 1px solid #65737e;
