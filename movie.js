@@ -4,11 +4,11 @@ const videoClip = {
   initHeight: 0,
   width: 0,
   height: 0,
-  start: 0;
-  end: 0;
+  start: 0,
+  end: 0,
   duration: function() {
     return this.end - this.start;
-  };
+  },
   mirror: false,
   scale: 1.0,
   fps: 0.0,
