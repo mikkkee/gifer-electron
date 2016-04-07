@@ -1,12 +1,21 @@
 'use strict';
 
+const videoClip = require('./movie.js');
+
+function bindUI() {
+  // Bind options to videoClip file.
+}
+
+function reset() {
+  // Reset options to values of video file.
+}
+
 function init() {
   // Disable drag + drop event for document.
   document.addEventListener('dragover', function(event) {
     event.preventDefault();
     return false;
   }, false);
-
   document.addEventListener('drop', function(event) {
     event.preventDefault();
     return false;
@@ -28,7 +37,7 @@ function init() {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     console.log('File you dragged here is', file.path);
-
+    videoClip.video = file.path;
     // Remove exitng video.
     const existingVideo = holder.getElementsByTagName('video')[0];
     if (existingVideo) { existingVideo.remove(); };
@@ -43,8 +52,8 @@ function init() {
     source.setAttribute('src', file.path);
     video.appendChild(source);
     holder.appendChild(video);
-    return false;
+    return true;
   };
-};
+}
 
 window.onload = init;
