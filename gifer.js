@@ -6,6 +6,15 @@ let video;
 function init() {
   video = document.querySelector('video');
   bindEvents();
+  const abc = new Bind({clip: videoClip}, {
+    'clip.video': 'input#video-input',
+    'clip.start': 'input#start-input',
+    'clip.end': 'input#end-input',
+    'clip.width': 'input#width-input',
+    'clip.height': 'input#height-input',
+    'clip.scale': 'input#scale-input',
+    'clip.fps': 'input#fps-input',
+    'clip.speed': 'input#speed-input'});
 }
 
 function bindEvents() {
