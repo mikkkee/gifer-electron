@@ -47,7 +47,7 @@ function loadVideo(e) {
   const file = e.dataTransfer.files[0];
 
   console.log('File you dragged here is ', file.path);
-  videoClip.video = file.path;
+  videoClip.loadVideo(file.path);
 
   video.src = file.path;
   dragText.className += ' hidden';
