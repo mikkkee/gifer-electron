@@ -106,13 +106,15 @@ const videoClip = {
       {name: 'All Files', extensions: ['*']}
       ],
     }, function(gifname) {
-      const options = ' -ss ' + _this.start + ' -t ' + _this.Duration()
+      const options = ' -y -ss ' + _this.start + ' -t ' + _this.Duration()
         + ' -i ' + _this.video + ' -vf ' + 'fps=' + _this.fps + ',scale='
         + _this.width + ':' + _this.height + ':flags=lanczos,'
         + 'setpts=1/' + _this.speed + '*PTS ' + gifname;
       exec(_this.ffmpeg + options, function (error, stdout, stderr) {
         console.log('GIF convert finished!');
-        callback();
+        if (typeof callback === "function") {
+          callback(gifname);
+        }
       });
     });
   },

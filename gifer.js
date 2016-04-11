@@ -30,7 +30,7 @@ function BindEvents() {
 
   doScale.onchange = ToggleScale;
 
-  makeBtn.addEventListener('click', function(){videoClip.MakeGIF();});
+  makeBtn.addEventListener('click', function(){videoClip.MakeGIF(UpdateGIF);});
   resetBtn.addEventListener('click', Reset);
   gvSwitch.addEventListener('click', function(){ToggleGV(event);});
 
@@ -54,6 +54,13 @@ function BindEvents() {
     'clip.speed': 'input#speed-input',
     'clip.mirror': 'input#do-mirror'
     });
+}
+
+function UpdateGIF(gifFile) {
+  const gif = document.querySelector('#gif');
+  const gv = document.querySelector('#gif-video-switch');
+  gif.innerHTML = '<img src="' + gifFile + '" height=100%>';
+  if (gv.checked) gv.click();
 }
 
 function ToggleGV(event) {
