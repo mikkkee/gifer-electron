@@ -2,13 +2,75 @@
 
 const videoClip = require('./movie.js');
 const remote = require('electron').remote;
-const Menu = require('electron').remote.Menu;
-const MenuItem = require('electron').remote.MenuItem;
-let video;
+const dialog = remote.dialog;
+const Menu = remote.Menu;
+const MenuItem = remote.MenuItem;
+const video = document.querySelector('video');
 
 function Init() {
-  video = document.querySelector('video');
+  CreateMenu();
   BindEvents();
+}
+
+function CreateMenu() {
+  const template = [
+  {
+    label: 'File',
+    submenu: [
+    {
+        label: 'Open Video',
+        accelerator: 'CmdOrCtrl+O',
+        click: function(item, win) {LoadVideo();},
+    }]}];
+
+  if (process.platform == 'darwin') {
+  const name = require('electron').remote.app.getName();
+  template.unshift({
+    label: name,
+    submenu: [
+      {
+        label: 'About ' + name,
+        role: 'about'
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Services',
+        role: 'services',
+        submenu: []
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Hide ' + name,
+        accelerator: 'Command+H',
+        role: 'hide'
+      },
+      {
+        label: 'Hide Others',
+        accelerator: 'Command+Alt+H',
+        role: 'hideothers'
+      },
+      {
+        label: 'Show All',
+        role: 'unhide'
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Quit',
+        accelerator: 'Command+Q',
+        click: function() { app.quit(); }
+      },
+    ]
+  });
+  }
+
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
 }
 
 function BindEvents() {
@@ -22,6 +84,8 @@ function BindEvents() {
   const gvSwitch = document.querySelector('#gif-video-switch');
   // Disable drag and drop event for document.
   document.addEventListener('dragover', Idle, false);
+  document.addEventListener('dragleave', Idle, false);
+  document.addEventListener('dragend', Idle, false);
   document.addEventListener('drop', Idle, false);
 
   holder.ondragover = Idle;
@@ -108,8 +172,25 @@ function VideoError(msg) {
   console.log(msg);
 }
 
-function LoadVideo(videoFile) {
-  videoClip.LoadVideo(videoFile);
+function LoadVideo() {
+  videoClip.OpenVideoDialog(AfterLoadingVideo);
+}
+
+function AfterLoadingVideo(videoFile){
+  const dragText = document.getElementById('drag-text');
+  const video = document.querySelector('video');
+  video.src = videoFile;
+  // Hide text if haven't.
+  if (! dragText.classList.contains('hidden')) {
+    dragText.className += 'hidden';
+  }
+  // Show video if haven't.
+  if (video.classList.contains('hidden')) {
+    video.classList.remove('hidden');
+  }
+  setTimeout(function() {
+    if (!video.videoWidth) VideoError('Cannot play video');
+  }, 500);
 }
 
 function LoadVideoFromDrop(e) {
@@ -125,7 +206,7 @@ function LoadVideoFromDrop(e) {
   video.classList.remove('hidden');
   setTimeout(function() {
     if (!video.videoWidth) VideoError('Cannot play video');
-  }, 200);
+  }, 500);
 }
 
 function Reset() {
