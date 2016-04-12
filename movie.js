@@ -48,6 +48,7 @@ const videoClip = {
   width: 0,
   height: 0,
   start: 0,
+  initStart: 0,
   end: 0,
   initEnd: 0,
   Duration: function() {
@@ -87,7 +88,8 @@ const videoClip = {
           _this.initHeight = videoStream.height;
           _this.ratio = _this.initWidth / _this.initHeight;
           _this.initRatio = _this.initWidth / _this.initHeight;
-          _this.start = eval(videoStream.start_time).toFixed(3);
+          _this.start = eval(videoStream.start_time).toFixed(3);\
+          _this.initStart = _this.start;
           _this.end = eval(videoStream.duration).toFixed(3);
           _this.initEnd = _this.end;
           _this.fps = eval(videoStream.r_frame_rate).toFixed(2);
@@ -124,6 +126,7 @@ const videoClip = {
   Reset: function(){
     this.height = this.initHeight;
     this.width = this.initWidth;
+    this.start = this.initStart;
     this.end = this.initEnd;
     this.ratio = this.initRatio;
     this.fps = this.initFps;
