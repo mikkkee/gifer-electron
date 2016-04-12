@@ -173,6 +173,8 @@ function VideoError(msg) {
 }
 
 function LoadVideo() {
+  const gv = document.querySelector('#gif-video-switch');
+  if (! gv.checked) {gv.click();}
   videoClip.OpenVideoDialog(AfterLoadingVideo);
 }
 
