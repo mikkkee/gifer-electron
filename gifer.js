@@ -123,7 +123,8 @@ function BindEvents() {
 function UpdateGIF(gifFile) {
   const gif = document.querySelector('#gif');
   const gv = document.querySelector('#gif-video-switch');
-  gif.innerHTML = '<img src="' + gifFile + '" height=100%>';
+  gif.innerHTML = '';
+  gif.innerHTML = '<img src="' + gifFile + '?' + new Date().getTime() + '" height=100%>';
   if (gv.checked) gv.click();
 }
 
