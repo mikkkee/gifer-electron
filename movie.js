@@ -3,6 +3,43 @@
 const os = require('os');
 const dialog = require('electron').remote.dialog;
 const exec = require('child_process').exec;
+const path = require('path');
+
+const videoExtensions = [
+  "3g2",
+  "3gp",
+  "aaf",
+  "asf",
+  "avchd",
+  "avi",
+  "drc",
+  "flv",
+  "m2v",
+  "m4p",
+  "m4v",
+  "mkv",
+  "mng",
+  "mov",
+  "mp2",
+  "mp4",
+  "mpe",
+  "mpeg",
+  "mpg",
+  "mpv",
+  "mxf",
+  "nsv",
+  "ogg",
+  "ogv",
+  "qt",
+  "rm",
+  "rmvb",
+  "roq",
+  "svi",
+  "vob",
+  "webm",
+  "wmv",
+  "yuv"
+]
 
 const videoClip = {
   video: '',
@@ -26,8 +63,11 @@ const videoClip = {
   platform: os.platform(),
   ffprobe: os.platform() === 'win32' ? '.\\bin\\ffprobe.exe' : './bin/ffprobe',
   ffmpeg: os.platform() === 'win32' ? '.\\bin\\ffmpeg.exe' : './bin/ffmpeg',
+  lastGIFPath: '.',
+  lastVideoPath: '.',
   LoadVideo: function (path) {
     this.video = path;
+    if (this.platform === 'win32') {this.video = '"' + this.video + '"';}
     this.GetVideoInfo();
   },
   GetVideoInfo: function(){
@@ -91,6 +131,24 @@ const videoClip = {
     this.scale = '';
     this.speed = 1;
   },
+  OpenVideoDialog: function(callback) {
+    const _this = this;
+    dialog.showOpenDialog({
+      title: 'Select Video',
+      defaultPath: _this.lastVideoPath,
+      filters: [
+      {name: 'Videos', extensions: videoExtensions},
+      {name: 'All Files', extensions: ['*']}
+      ]
+    }, function(videoName){
+      if (!videoName) return;
+      _this.lastVideoPath = path.dirname(videoName);
+      _this.LoadVideo(videoName);
+      if (typeof callback === "function") {
+        callback(videoName);
+      }
+    });
+  },
   MakeGIF: function(callback) {
     // ffmpeg
     // -ss [start] -t [duration]
@@ -100,17 +158,25 @@ const videoClip = {
     const _this = this;
     dialog.showSaveDialog({
       title: 'hehe',
-      defaultPath: 'C:\\',
+      defaultPath: _this.lastGIFPath,
       filters: [
       {name: 'GIFs', extensions: ['gif']},
       {name: 'All Files', extensions: ['*']}
       ],
     }, function(gifname) {
+      if (!gifname) {return;}
+      _this.lastGIFPath = path.dirname(gifname);
+      let gifnameCMD;
+      if (_this.platform == 'win32') {gifnameCMD = '"' + gifname + '"';}
       const options = ' -y -ss ' + _this.start + ' -t ' + _this.Duration()
         + ' -i ' + _this.video + ' -vf ' + 'fps=' + _this.fps + ',scale='
         + _this.width + ':' + _this.height + ':flags=lanczos,'
-        + 'setpts=1/' + _this.speed + '*PTS ' + gifname;
+        + 'setpts=1/' + _this.speed + '*PTS ' + gifnameCMD;
+      console.log(options);
       exec(_this.ffmpeg + options, function (error, stdout, stderr) {
+        console.log('ERROR: ', error);
+        console.log('STDOUT: ', stdout);
+        console.log('STDERR: ', stderr);
         console.log('GIF convert finished!');
         if (typeof callback === "function") {
           callback(gifname);
