@@ -15,11 +15,9 @@ let mainWindow;
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({ width: 1080, height: 760 });
-  var menu = new Menu();
-  menu.append(new MenuItem({ label: 'MenuItem1', click: function() { console.log('item 1 clicked'); } }));
-  menu.append(new MenuItem({ type: 'separator' }));
-  menu.append(new MenuItem({ label: 'MenuItem2', type: 'checkbox', checked: true }));
-  // mainWindow.setMenu(menu);
+  // Disable default menu at start.
+  const menu = new Menu();
+  mainWindow.setMenu(menu);
 
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/index.html');
