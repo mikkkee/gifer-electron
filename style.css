@@ -203,6 +203,10 @@ input[type="checkbox"] {
   padding-right: 10px;
 }
 
+.option-label.right {
+  text-align: left;
+}
+
 .onoffswitch {
     position: relative; width: 120px;
     -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;

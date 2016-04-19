@@ -14,7 +14,7 @@ let mainWindow;
 
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({ width: 1080, height: 760 });
+  mainWindow = new BrowserWindow({ width: 900, height: 760 });
   // Disable default menu at start.
   const menu = new Menu();
   mainWindow.setMenu(menu);
