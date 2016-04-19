@@ -72,33 +72,51 @@ const videoClip = {
     this.GetVideoInfo();
   },
   GetVideoInfo: function(){
-    // Get detailed video info by calling ffprobe.
+    // Get detailed video info by calling ffmpeg.
+    // STDERR example:
+    // "  Duration: 03:09:49.62, start: 0.000000, bitrate: 1328 kb/s"
+    // "    Stream #0:1(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 856x480 [SAR 1:1 DAR 107:60], 1199 kb/s, 29.97 fps, 29.97 tbr, 60k tbn, 59.94 tbc (default)"
     const _this = this;
 
-    exec(this.ffprobe + ' -v quiet -print_format json -show_format -show_streams ' + this.video,
-      function callback(error, stdout, stderr){
-        if (error) {
-          alert("Please select a video file.");
-          console.log(error);
-        } else {
-          const streams = JSON.parse(stdout).streams
-          const videoStream = streams[0].codec_name === 'video' ? streams[0] : streams[1];
-          console.log(videoStream);
-          _this.width = videoStream.width;
-          _this.height = videoStream.height;
-          _this.initWidth = videoStream.width;
-          _this.initHeight = videoStream.height;
-          _this.ratio = _this.initWidth / _this.initHeight;
-          _this.initRatio = _this.initWidth / _this.initHeight;
-          _this.start = _this.ParseSecondsToTime(eval(videoStream.start_time).toFixed(3));
-          _this.initStart = _this.start;
-          _this.end = _this.ParseSecondsToTime(eval(videoStream.duration).toFixed(3));
-          _this.initEnd = _this.end;
-          _this.fps = eval(videoStream.r_frame_rate).toFixed(2);
-          _this.initFps = _this.fps;
+    exec(this.ffmpeg + ' -i ' + this.video, function callback(error, stdout, stderr){
+      const output = stderr.split('\n');
+      let _width, _height, _fps, _start, _duration;
+
+      for (let i=output.length - 1; i>=0; --i) {
+        // Find Video Stream description line.
+        if (output[i].indexOf('Stream') >= 0 &&
+          output[i].indexOf('Video:') >=0 &&
+          output[i+1].indexOf('Metadata:') >= 0) {
+          const streamDetails = output[i].split(',');
+          const sizeList = streamDetails[streamDetails.length - 6].split(' ');
+          const fpsList = streamDetails[streamDetails.length - 4].split(' ');
+          _width = sizeList[1].split('x')[0];
+          _height = sizeList[1].split('x')[1];
+          _fps = fpsList[1];
         }
-        return;
-      });
+        // Find time details line.
+        if (output[i].indexOf('Duration:') >= 0 &&
+          output[i].indexOf('start:') >= 0) {
+          const timeDetails = output[i].split(',');
+          const durationList = timeDetails[0].split(' ');
+          const startList = timeDetails[1].split(' ');
+          _start = startList[startList.length - 1];
+          _duration = durationList[durationList.length - 1];
+        }
+      }
+      _this.width = _width;
+      _this.height = _height;
+      _this.initWidth = _width;
+      _this.initHeight = _height;
+      _this.ratio = _this.initWidth / _this.initHeight;
+      _this.initRatio = _this.initWidth / _this.initHeight;
+      _this.start = _start;
+      _this.initStart = _start;
+      _this.end = _duration;
+      _this.initEnd = _duration;
+      _this.fps = _fps;
+      _this.initFps = _fps;
+    })
   },
   SetWidth: function(w) {
     // Set width to w and keep aspect ratio unchanged.
