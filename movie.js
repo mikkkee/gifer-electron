@@ -47,12 +47,12 @@ const videoClip = {
   initHeight: 0,
   width: 0,
   height: 0,
-  start: 0,
-  initStart: 0,
-  end: 0,
-  initEnd: 0,
+  start: '0',
+  initStart: '0',
+  end: '0',
+  initEnd: '0',
   Duration: function() {
-    return this.end - this.start;
+    return this.ParseTimeToSeconds(this.end) - this.ParseTimeToSeconds(this.start);
   },
   mirror: false,
   scale: '',
@@ -88,9 +88,9 @@ const videoClip = {
           _this.initHeight = videoStream.height;
           _this.ratio = _this.initWidth / _this.initHeight;
           _this.initRatio = _this.initWidth / _this.initHeight;
-          _this.start = eval(videoStream.start_time).toFixed(3);
+          _this.start = _this.ParseSecondsToTime(eval(videoStream.start_time).toFixed(3));
           _this.initStart = _this.start;
-          _this.end = eval(videoStream.duration).toFixed(3);
+          _this.end = _this.ParseSecondsToTime(eval(videoStream.duration).toFixed(3));
           _this.initEnd = _this.end;
           _this.fps = eval(videoStream.r_frame_rate).toFixed(2);
           _this.initFps = _this.fps;
@@ -169,6 +169,7 @@ const videoClip = {
     }, function(gifname) {
       if (!gifname) {return;}
       _this.lastGIFPath = path.dirname(gifname);
+      // gifname may contain spaces. Need to wrap quotes around it.
       let gifnameCMD;
       if (_this.platform == 'win32') {gifnameCMD = '"' + gifname + '"';}
       const options = ' -y -ss ' + _this.start + ' -t ' + _this.Duration()
@@ -186,6 +187,30 @@ const videoClip = {
         }
       });
     });
+  },
+  ParseTimeToSeconds: function(t){
+    const ts = t.toString();
+    const tsList = ts.split(':');
+    let seconds = 0;
+    for (let i=tsList.length-1; i>=0; --i) {
+      seconds += tsList[i] * Math.pow(60, tsList.length - 1 - i);
+    }
+    return seconds;
+  },
+  ParseSecondsToTime: function(t){
+    let seconds = 0;
+    let minutes = 0;
+    let hours = 0;
+    seconds = (t % 60).toFixed(3);
+    minutes = Math.floor(t / 60) % 60;
+    hours = Math.floor(t / 60 / 60) % 60;
+    if (hours) {
+      return hours + ':' + minutes + ':' + seconds;
+    } else if (minutes) {
+      return minutes + ':' + seconds;
+    } else {
+      return seconds;
+    }
   },
 };
 

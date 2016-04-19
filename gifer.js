@@ -5,9 +5,10 @@ const remote = require('electron').remote;
 const dialog = remote.dialog;
 const Menu = remote.Menu;
 const MenuItem = remote.MenuItem;
-const video = document.querySelector('video');
+let video;
 
 function Init() {
+  video = document.querySelector('video')
   CreateMenu();
   BindEvents();
 }
