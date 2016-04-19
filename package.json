@@ -1,6 +1,6 @@
 {
   "name": "gifer-electron",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A GIF maker built with electron",
   "main": "main.js",
   "scripts": {
@@ -12,7 +12,8 @@
   },
   "keywords": [
     "Electron",
-    "gif"
+    "gif",
+    "gifer"
   ],
   "author": "Jianfeng",
   "license": "MIT",
@@ -21,6 +22,7 @@
   },
   "homepage": "https://github.com/mikkkee/gifer-electron",
   "devDependencies": {
+    "bind.js": "^1.1.0",
     "electron-packager": "^6.0.2",
     "electron-prebuilt": "^0.36.0",
     "grd": "^1.2.3"
