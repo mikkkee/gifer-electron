@@ -189,7 +189,7 @@ const videoClip = {
       if (!gifname) {return;}
       _this.lastGIFPath = path.dirname(gifname);
       // gifname may contain spaces. Need to wrap quotes around it.
-      let gifnameCMD;
+      let gifnameCMD = gifname;
       if (_this.platform == 'win32') {gifnameCMD = '"' + gifname + '"';}
       const options = ' -y -ss ' + _this.start + ' -t ' + _this.Duration()
         + ' -i ' + _this.video + ' -vf ' + 'fps=' + _this.fps + ',scale='
