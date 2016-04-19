@@ -137,6 +137,7 @@ const videoClip = {
     return this;
   },
   UpdateWithScale: function(){
+    console.log(this.scale);
     if (this.scale) {
       this.width = this.initWidth * this.scale;
       this.height = this.initHeight * this.scale;

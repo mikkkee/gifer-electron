@@ -5,7 +5,7 @@ const remote = require('electron').remote;
 const dialog = remote.dialog;
 const Menu = remote.Menu;
 const MenuItem = remote.MenuItem;
-let video;
+let video, bind;
 
 function Init() {
   video = document.querySelector('video')
@@ -99,7 +99,7 @@ function BindEvents() {
   resetBtn.addEventListener('click', Reset);
   gvSwitch.addEventListener('click', function(){ToggleGV(event);});
 
-  const bind = new Bind({clip: videoClip}, {
+  bind = new Bind({clip: videoClip}, {
     'clip.video': 'input#video-input',
     'clip.start': {
       dom: 'input#start-input',
@@ -153,6 +153,7 @@ function ToggleScale() {
     heightInput.setAttribute('disabled', '');
     widthInput.setAttribute('disabled', '');
   } else {
+    bind.clip.scale = 1;
     scaleInput.setAttribute('disabled', '');
     heightInput.removeAttribute('disabled');
     widthInput.removeAttribute('disabled');
