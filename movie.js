@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const os = require('os');
 const dialog = require('electron').remote.dialog;
 const exec = require('child_process').exec;
@@ -191,19 +192,39 @@ const videoClip = {
       // gifname may contain spaces. Need to wrap quotes around it.
       let gifnameCMD = gifname;
       if (_this.platform == 'win32') {gifnameCMD = '"' + gifname + '"';}
-      const options = ' -y -ss ' + _this.start + ' -t ' + _this.Duration()
-        + ' -i ' + _this.video + ' -vf ' + 'fps=' + _this.fps + ',scale='
-        + _this.width + ':' + _this.height + ':flags=lanczos,'
-        + 'setpts=1/' + _this.speed + '*PTS ' + gifnameCMD;
-      console.log(options);
-      exec(_this.ffmpeg + options, function (error, stdout, stderr) {
+
+      const filters = 'fps=' + _this.fps
+        + ',scale=' + _this.width + ':' + _this.height + ':flags=lanczos,'
+        + 'setpts=1/' + _this.speed + '*PTS';
+      const palette = './tmp.png';
+      const createPalette = ' -y -ss ' + _this.start 
+        + ' -t ' + _this.Duration()
+        + ' -i ' + _this.video 
+        + ' -vf ' + '"' + filters + ',palettegen ' + '"'
+        + ' ' + palette;
+      const usePalette = ' -y -ss ' + _this.start 
+        + ' -t ' + _this.Duration()
+        + ' -i ' + _this.video
+        + ' -i ' + palette
+        + ' -lavfi ' + '"' + filters + ' [x]; [x][1:v] paletteuse' + '"'
+        + " " + gifnameCMD;
+      console.log(createPalette, '\n\n', usePalette);
+      exec(_this.ffmpeg + createPalette, function (error, stdout, stderr) {
+        console.log('CREATE PALETTE\n');
         console.log('ERROR: ', error);
         console.log('STDOUT: ', stdout);
         console.log('STDERR: ', stderr);
-        console.log('GIF convert finished!');
-        if (typeof callback === "function") {
-          callback(gifname);
-        }
+        exec(_this.ffmpeg + usePalette, function(error, stdout, stderr){
+          console.log('USE PALETTE\n');
+          console.log('ERROR: ', error);
+          console.log('STDOUT: ', stdout);
+          console.log('STDERR: ', stderr);
+          console.log('GIF convert finished!');
+          fs.unlink(palette);
+          if (typeof callback === "function") {
+            callback(gifname);
+          }
+        });
       });
     });
   },
