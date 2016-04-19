@@ -81,7 +81,9 @@ const videoClip = {
           alert("Please select a video file.");
           console.log(error);
         } else {
-          const videoStream = JSON.parse(stdout).streams[0];
+          const streams = JSON.parse(stdout).streams
+          const videoStream = streams[0].codec_name === 'video' ? streams[0] : streams[1];
+          console.log(videoStream);
           _this.width = videoStream.width;
           _this.height = videoStream.height;
           _this.initWidth = videoStream.width;
