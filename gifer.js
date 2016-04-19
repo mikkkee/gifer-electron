@@ -117,7 +117,7 @@ function BindEvents() {
     },
     'clip.fps': 'input#fps-input',
     'clip.speed': 'input#speed-input',
-    'clip.mirror': 'input#do-mirror'
+    'clip.highq': 'input#do-highq'
     });
 }
 
