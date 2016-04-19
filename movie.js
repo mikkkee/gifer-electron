@@ -62,7 +62,6 @@ const videoClip = {
   ratio: 0.0, // initWidth / initHeight.
   initRatio: 0.0,
   platform: os.platform(),
-  ffprobe: os.platform() === 'win32' ? '.\\bin\\ffprobe.exe' : './bin/ffprobe',
   ffmpeg: os.platform() === 'win32' ? '.\\bin\\ffmpeg.exe' : './bin/ffmpeg',
   lastGIFPath: '.',
   lastVideoPath: '.',
