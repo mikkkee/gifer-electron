@@ -137,7 +137,6 @@ const videoClip = {
     return this;
   },
   UpdateWithScale: function(){
-    console.log(this.scale);
     if (this.scale) {
       this.width = this.initWidth * this.scale;
       this.height = this.initHeight * this.scale;
@@ -212,7 +211,6 @@ const videoClip = {
           + ' -i ' + palette
           + ' -lavfi ' + '"' + filters + ' [x]; [x][1:v] paletteuse' + '"'
           + " " + gifnameCMD;
-        console.log(createPalette, '\n\n', usePalette);
         exec(_this.ffmpeg + createPalette, function (error, stdout, stderr){
           console.log('CREATE PALETTE\n');
           console.log('ERROR: ', error);
