@@ -23,13 +23,12 @@
   "homepage": "https://github.com/mikkkee/gifer-electron",
   "devDependencies": {
     "bind.js": "^1.1.0",
-    "electron-packager": "^6.0.2",
-    "electron-prebuilt": "^0.36.0",
+    "electron-packager": "^7.0.0",
+    "electron-prebuilt": "^0.37.6",
     "grd": "^1.2.3"
   },
   "dependencies": {
     "bind.js": "^1.1.0",
-    "electron-prebuilt": "^0.36.0",
     "grd": "^1.2.3"
   }
 }
