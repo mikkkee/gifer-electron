@@ -63,7 +63,7 @@ const videoClip = {
   ratio: 0.0, // initWidth / initHeight.
   initRatio: 0.0,
   platform: os.platform(),
-  ffmpeg: os.platform() === 'win32' ? '.\\bin\\ffmpeg.exe' : './bin/ffmpeg',
+  ffmpeg: os.platform() === 'win32' ? path.join(__dirname, '.\\bin\\ffmpeg.exe') : path.join(__dirname, './bin/ffmpeg'),
   lastGIFPath: '.',
   lastVideoPath: '.',
   LoadVideo: function (path) {
@@ -199,7 +199,7 @@ const videoClip = {
 
       if (_this.highq) {
         // Generate high quality GIF.
-        const palette = './tmp.png';
+        const palette = path.join(__dirname, './tmp.png');
         const createPalette = ' -y -ss ' + _this.start 
           + ' -t ' + _this.Duration()
           + ' -i ' + _this.video 
