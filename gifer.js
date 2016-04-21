@@ -7,6 +7,7 @@ const Menu = remote.Menu;
 const MenuItem = remote.MenuItem;
 let video, bind;
 
+
 function Init() {
   video = document.querySelector('video')
   CreateMenu();
@@ -14,60 +15,49 @@ function Init() {
 }
 
 function CreateMenu() {
-  const template = [
-  {
+  const template = [{
     label: 'File',
-    submenu: [
-    {
-        label: 'Open Video',
-        accelerator: 'CmdOrCtrl+O',
-        click: function(item, win) {LoadVideo();},
-    }]}];
+    submenu: [{
+      label: 'Open Video',
+      accelerator: 'CmdOrCtrl+O',
+      click: function(item, win) { LoadVideo(); },
+    }]
+  }];
 
   if (process.platform == 'darwin') {
-  const name = require('electron').remote.app.getName();
-  template.unshift({
-    label: name,
-    submenu: [
-      {
+    const name = require('electron').remote.app.getName();
+    template.unshift({
+      label: name,
+      submenu: [{
         label: 'About ' + name,
         role: 'about'
-      },
-      {
+      }, {
         type: 'separator'
-      },
-      {
+      }, {
         label: 'Services',
         role: 'services',
         submenu: []
-      },
-      {
+      }, {
         type: 'separator'
-      },
-      {
+      }, {
         label: 'Hide ' + name,
         accelerator: 'Command+H',
         role: 'hide'
-      },
-      {
+      }, {
         label: 'Hide Others',
         accelerator: 'Command+Alt+H',
         role: 'hideothers'
-      },
-      {
+      }, {
         label: 'Show All',
         role: 'unhide'
-      },
-      {
+      }, {
         type: 'separator'
-      },
-      {
+      }, {
         label: 'Quit',
         accelerator: 'Command+Q',
         click: function() { app.quit(); }
-      },
-    ]
-  });
+      }, ]
+    });
   }
 
   const menu = Menu.buildFromTemplate(template);
@@ -95,11 +85,11 @@ function BindEvents() {
 
   doScale.onchange = ToggleScale;
 
-  makeBtn.addEventListener('click', function(){videoClip.MakeGIF(UpdateGIF);});
+  makeBtn.addEventListener('click', function() { videoClip.MakeGIF(UpdateGIF); });
   resetBtn.addEventListener('click', Reset);
-  gvSwitch.addEventListener('click', function(){ToggleGV(event);});
+  gvSwitch.addEventListener('click', function() { ToggleGV(event); });
 
-  bind = new Bind({clip: videoClip}, {
+  bind = new Bind({ clip: videoClip }, {
     'clip.video': 'input#video-input',
     'clip.start': {
       dom: 'input#start-input',
@@ -118,7 +108,7 @@ function BindEvents() {
     'clip.fps': 'input#fps-input',
     'clip.speed': 'input#speed-input',
     'clip.highq': 'input#do-highq'
-    });
+  });
 }
 
 function UpdateGIF(gifFile) {
@@ -176,16 +166,16 @@ function VideoError(msg) {
 
 function LoadVideo() {
   const gv = document.querySelector('#gif-video-switch');
-  if (! gv.checked) {gv.click();}
+  if (!gv.checked) { gv.click(); }
   videoClip.OpenVideoDialog(AfterLoadingVideo);
 }
 
-function AfterLoadingVideo(videoFile){
+function AfterLoadingVideo(videoFile) {
   const dragText = document.getElementById('drag-text');
   const video = document.querySelector('video');
   video.src = videoFile;
   // Hide text if haven't.
-  if (! dragText.classList.contains('hidden')) {
+  if (!dragText.classList.contains('hidden')) {
     dragText.className += 'hidden';
   }
   // Show video if haven't.

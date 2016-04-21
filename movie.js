@@ -66,27 +66,27 @@ const videoClip = {
   ffmpeg: os.platform() === 'win32' ? path.join(__dirname, '.\\bin\\ffmpeg.exe') : path.join(__dirname, './bin/ffmpeg'),
   lastGIFPath: '.',
   lastVideoPath: '.',
-  LoadVideo: function (path) {
+  LoadVideo: function(path) {
     this.video = path;
-    if (this.platform === 'win32') {this.video = '"' + this.video + '"';}
+    if (this.platform === 'win32') { this.video = '"' + this.video + '"'; }
     this.GetVideoInfo();
   },
-  GetVideoInfo: function(){
+  GetVideoInfo: function() {
     // Get detailed video info by calling ffmpeg.
     // STDERR example:
     // "  Duration: 03:09:49.62, start: 0.000000, bitrate: 1328 kb/s"
     // "    Stream #0:1(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 856x480 [SAR 1:1 DAR 107:60], 1199 kb/s, 29.97 fps, 29.97 tbr, 60k tbn, 59.94 tbc (default)"
     const _this = this;
 
-    exec(this.ffmpeg + ' -i ' + this.video, function callback(error, stdout, stderr){
+    exec(this.ffmpeg + ' -i ' + this.video, function callback(error, stdout, stderr) {
       const output = stderr.split('\n');
       let _width, _height, _fps, _start, _duration;
 
-      for (let i=output.length - 1; i>=0; --i) {
+      for (let i = output.length - 1; i >= 0; --i) {
         // Find Video Stream description line.
         if (output[i].indexOf('Stream') >= 0 &&
-          output[i].indexOf('Video:') >=0 &&
-          output[i+1].indexOf('Metadata:') >= 0) {
+          output[i].indexOf('Video:') >= 0 &&
+          output[i + 1].indexOf('Metadata:') >= 0) {
           const streamDetails = output[i].split(',');
           const sizeList = streamDetails[streamDetails.length - 6].split(' ');
           const fpsList = streamDetails[streamDetails.length - 4].split(' ');
@@ -136,14 +136,14 @@ const videoClip = {
     this.height = this.initHeight * this.scale;
     return this;
   },
-  UpdateWithScale: function(){
+  UpdateWithScale: function() {
     if (this.scale) {
       this.width = this.initWidth * this.scale;
       this.height = this.initHeight * this.scale;
     }
     return this;
   },
-  Reset: function(){
+  Reset: function() {
     this.height = this.initHeight;
     this.width = this.initWidth;
     this.start = this.initStart;
@@ -160,10 +160,10 @@ const videoClip = {
       title: 'Select Video',
       defaultPath: _this.lastVideoPath,
       filters: [
-      {name: 'Videos', extensions: videoExtensions},
-      {name: 'All Files', extensions: ['*']}
+        { name: 'Videos', extensions: videoExtensions },
+        { name: 'All Files', extensions: ['*'] }
       ]
-    }, function(videoName){
+    }, function(videoName) {
       if (!videoName) return;
       _this.lastVideoPath = path.dirname(videoName);
       _this.LoadVideo(videoName);
@@ -183,40 +183,31 @@ const videoClip = {
       title: 'hehe',
       defaultPath: _this.lastGIFPath,
       filters: [
-      {name: 'GIFs', extensions: ['gif']},
-      {name: 'All Files', extensions: ['*']}
+        { name: 'GIFs', extensions: ['gif'] },
+        { name: 'All Files', extensions: ['*'] }
       ],
     }, function(gifname) {
-      if (!gifname) {return;}
+      if (!gifname) {
+        return;
+      }
       _this.lastGIFPath = path.dirname(gifname);
       // gifname may contain spaces. Need to wrap quotes around it.
       let gifnameCMD = gifname;
-      if (_this.platform == 'win32') {gifnameCMD = '"' + gifname + '"';}
+      if (_this.platform == 'win32') { gifnameCMD = '"' + gifname + '"'; }
 
-      const filters = 'fps=' + _this.fps
-        + ',scale=' + _this.width + ':' + _this.height + ':flags=lanczos,'
-        + 'setpts=1/' + _this.speed + '*PTS';
+      const filters = 'fps=' + _this.fps + ',scale=' + _this.width + ':' + _this.height + ':flags=lanczos,' + 'setpts=1/' + _this.speed + '*PTS';
 
       if (_this.highq) {
         // Generate high quality GIF.
         const palette = path.join(__dirname, './tmp.png');
-        const createPalette = ' -y -ss ' + _this.start 
-          + ' -t ' + _this.Duration()
-          + ' -i ' + _this.video 
-          + ' -vf ' + '"' + filters + ',palettegen ' + '"'
-          + ' ' + palette;
-        const usePalette = ' -y -ss ' + _this.start 
-          + ' -t ' + _this.Duration()
-          + ' -i ' + _this.video
-          + ' -i ' + palette
-          + ' -lavfi ' + '"' + filters + ' [x]; [x][1:v] paletteuse' + '"'
-          + " " + gifnameCMD;
-        exec(_this.ffmpeg + createPalette, function (error, stdout, stderr){
+        const createPalette = ' -y -ss ' + _this.start + ' -t ' + _this.Duration() + ' -i ' + _this.video + ' -vf ' + '"' + filters + ',palettegen ' + '"' + ' ' + palette;
+        const usePalette = ' -y -ss ' + _this.start + ' -t ' + _this.Duration() + ' -i ' + _this.video + ' -i ' + palette + ' -lavfi ' + '"' + filters + ' [x]; [x][1:v] paletteuse' + '"' + " " + gifnameCMD;
+        exec(_this.ffmpeg + createPalette, function(error, stdout, stderr) {
           console.log('CREATE PALETTE\n');
           console.log('ERROR: ', error);
           console.log('STDOUT: ', stdout);
           console.log('STDERR: ', stderr);
-          exec(_this.ffmpeg + usePalette, function(error, stdout, stderr){
+          exec(_this.ffmpeg + usePalette, function(error, stdout, stderr) {
             console.log('USE PALETTE\n');
             console.log('ERROR: ', error);
             console.log('STDOUT: ', stdout);
@@ -228,35 +219,31 @@ const videoClip = {
             }
           });
         });
-        } else {
-          // Generate low quality GIF.
-          const options = ' -y -ss ' + _this.start 
-            + ' -t ' + _this.Duration()
-            + ' -i ' + _this.video 
-            + ' -vf ' + '"' + filters + '"'
-            + ' ' + gifnameCMD;
-          exec(_this.ffmpeg + options, function(error, stdout, stderr){
-            console.log('ERROR: ', error);
-            console.log('STDOUT: ', stdout);
-            console.log('STDERR: ', stderr);
-            console.log('Low Quality GIF convert finished!');
-            if (typeof callback === "function") {
-              callback(gifname);
-            }
-          });
-        }
+      } else {
+        // Generate low quality GIF.
+        const options = ' -y -ss ' + _this.start + ' -t ' + _this.Duration() + ' -i ' + _this.video + ' -vf ' + '"' + filters + '"' + ' ' + gifnameCMD;
+        exec(_this.ffmpeg + options, function(error, stdout, stderr) {
+          console.log('ERROR: ', error);
+          console.log('STDOUT: ', stdout);
+          console.log('STDERR: ', stderr);
+          console.log('Low Quality GIF convert finished!');
+          if (typeof callback === "function") {
+            callback(gifname);
+          }
+        });
+      }
     });
   },
-  ParseTimeToSeconds: function(t){
+  ParseTimeToSeconds: function(t) {
     const ts = t.toString();
     const tsList = ts.split(':');
     let seconds = 0;
-    for (let i=tsList.length-1; i>=0; --i) {
+    for (let i = tsList.length - 1; i >= 0; --i) {
       seconds += tsList[i] * Math.pow(60, tsList.length - 1 - i);
     }
     return seconds;
   },
-  ParseSecondsToTime: function(t){
+  ParseSecondsToTime: function(t) {
     let seconds = 0;
     let minutes = 0;
     let hours = 0;
