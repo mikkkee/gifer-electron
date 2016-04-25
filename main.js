@@ -48,10 +48,6 @@ function CreateFFMPEGListeners() {
 
 // Kill running FFMPEG process.
 function KillFFMPEG(){
-  if (pid != null) {
-    process.kill(pid);
-  }
-  pid = null;
 }
 
 // This method will be called when Electron has finished
