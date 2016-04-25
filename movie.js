@@ -4,6 +4,8 @@ const fs = require('fs');
 const os = require('os');
 const dialog = require('electron').remote.dialog;
 const exec = require('child_process').exec;
+const spawn = require('child_process').spawn;
+const ipc = require('electron').ipcRenderer;
 const path = require('path');
 
 const videoExtensions = [
@@ -200,8 +202,17 @@ const videoClip = {
       if (_this.highq) {
         // Generate high quality GIF.
         const palette = path.join(__dirname, './tmp.png');
-        const createPalette = ' -y -ss ' + _this.start + ' -t ' + _this.Duration() + ' -i ' + _this.video + ' -vf ' + '"' + filters + ',palettegen ' + '"' + ' ' + palette;
+        const createPalette = ['-y', '-ss '+_this.start, '-t '+_this.Duration(),
+          '-i '+_this.video, '-vf '+'"'+filters+',palettegen'+'"', palette];
+        // const createPalette = ' -y -ss ' + _this.start + ' -t ' + _this.Duration() + ' -i ' + _this.video + ' -vf ' + '"' + filters + ',palettegen ' + '"' + ' ' + palette;
         const usePalette = ' -y -ss ' + _this.start + ' -t ' + _this.Duration() + ' -i ' + _this.video + ' -i ' + palette + ' -lavfi ' + '"' + filters + ' [x]; [x][1:v] paletteuse' + '"' + " " + gifnameCMD;
+        const paletteCreator = spawn(_this.ffmpeg, createPalette);
+        paletteCreator.on('exit', function(code, signal){
+          console.log('This is the end;');
+          console.log(code, signal);
+        });
+        ipc.send('ffmpeg-begin', paletteCreator.pid);
+/*
         exec(_this.ffmpeg + createPalette, function(error, stdout, stderr) {
           console.log('CREATE PALETTE\n');
           console.log('ERROR: ', error);
@@ -218,7 +229,8 @@ const videoClip = {
               callback(gifname);
             }
           });
-        });
+        }); 
+*/
       } else {
         // Generate low quality GIF.
         const options = ' -y -ss ' + _this.start + ' -t ' + _this.Duration() + ' -i ' + _this.video + ' -vf ' + '"' + filters + '"' + ' ' + gifnameCMD;
