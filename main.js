@@ -12,7 +12,7 @@ const ipc = electron.ipcMain;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow, pid = null;
+let mainWindow, pids = [];
 
 function CreateWindow() {
   // Create the browser window.
@@ -38,16 +38,11 @@ function CreateWindow() {
 function CreateFFMPEGListeners() {
   ipc.on('ffmpeg-begin', function(event, arg) {
     console.log('ffmpeg-begin ', arg);
-    if (pid == null) {
-      pid = arg;
-    } else {
-      process.kill(pid);
-      pid = arg;
-    }
+    pids.push(arg);
   });
   ipc.on('ffmpeg-end', function(event, arg){
     console.log('ffmpeg-end ', arg);
-    pid = null;
+    if (pids.indexOf(arg) > -1) pids.splice(pids.indexOf(arg), 1);
   });
 }
 

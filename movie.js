@@ -195,22 +195,38 @@ const videoClip = {
       _this.lastGIFPath = path.dirname(gifname);
       // gifname may contain spaces. Need to wrap quotes around it.
       let gifnameCMD = gifname;
-      if (_this.platform == 'win32') { gifnameCMD = '"' + gifname + '"'; }
 
       const filters = 'fps=' + _this.fps + ',scale=' + _this.width + ':' + _this.height + ':flags=lanczos,' + 'setpts=1/' + _this.speed + '*PTS';
 
       if (_this.highq) {
         // Generate high quality GIF.
+        let _video = _this.video;
+        if (_this.platform === 'win32') { _video = _this.video.slice(1, -1); }
         const palette = path.join(__dirname, './tmp.png');
-        const createPalette = ['-y', '-ss '+_this.start, '-t '+_this.Duration(),
-          '-i '+_this.video, '-vf '+'"'+filters+',palettegen'+'"', palette];
-        // const createPalette = ' -y -ss ' + _this.start + ' -t ' + _this.Duration() + ' -i ' + _this.video + ' -vf ' + '"' + filters + ',palettegen ' + '"' + ' ' + palette;
-        const usePalette = ' -y -ss ' + _this.start + ' -t ' + _this.Duration() + ' -i ' + _this.video + ' -i ' + palette + ' -lavfi ' + '"' + filters + ' [x]; [x][1:v] paletteuse' + '"' + " " + gifnameCMD;
+        const createPalette = ['-y', '-ss', _this.start, '-t', _this.Duration(),
+          '-i', _video, '-vf', filters+',palettegen', palette];
+        const usePalette = ['-y', '-ss', _this.start, '-t', _this.Duration(),
+          '-i', _video, '-i', palette,
+          '-lavfi', filters+' [x]; [x][1:v] paletteuse', gifnameCMD];
         const paletteCreator = spawn(_this.ffmpeg, createPalette);
+        let paletteConsumer;
         paletteCreator.on('exit', function(code, signal){
-          console.log('This is the end;');
-          console.log(code, signal);
+          console.log('This is the end of creating palette.', this);
+          ipc.send('ffmpeg-end', paletteCreator.pid);
+
+          paletteConsumer = spawn(_this.ffmpeg, usePalette);
+          paletteConsumer.stdout.on('data', function(data){console.log(data.toString());});
+          paletteConsumer.stderr.on('data', function(data){console.log(data.toString());});
+          paletteConsumer.on('exit', function(code, signal){
+            console.log('This is the end of creating gif.', this);
+            if (typeof callback === "function") {
+              callback(gifname);
+            }
+          });
+
         });
+        paletteCreator.stdout.on('data', function(data){console.log(data.toString());});
+        paletteCreator.stderr.on('data', function(data){console.log(data.toString());});
         ipc.send('ffmpeg-begin', paletteCreator.pid);
 /*
         exec(_this.ffmpeg + createPalette, function(error, stdout, stderr) {
