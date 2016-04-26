@@ -81,24 +81,28 @@ const videoClip = {
     const _this = this;
 
     exec(this.ffmpeg + ' -i ' + this.video, function callback(error, stdout, stderr) {
+      // console.log("error: ", error);
+      // console.log("stdout: ", stdout);
+      // console.log("stderr: ", stderr);
       const output = stderr.split('\n');
       let _width, _height, _fps, _start, _duration;
 
       for (let i = output.length - 1; i >= 0; --i) {
         // Find Video Stream description line.
-        if (output[i].indexOf('Stream') >= 0 &&
-          output[i].indexOf('Video:') >= 0 &&
-          output[i + 1].indexOf('Metadata:') >= 0) {
-          const streamDetails = output[i].split(',');
-          const sizeList = streamDetails[streamDetails.length - 6].split(' ');
-          const fpsList = streamDetails[streamDetails.length - 4].split(' ');
-          _width = sizeList[1].split('x')[0];
-          _height = sizeList[1].split('x')[1];
-          _fps = fpsList[1];
+        if (output[i].indexOf('Stream #') >= 0 &&
+          output[i].indexOf('Video:') >= 0) {
+          const whReg = /(\d{1,4})x(\d{1,4})/;
+          const fpsReg = /(\d{1,4}|\d{1,4}\.\d{1,4})\s{1,2}fps/;
+          const wh = output[i].match(whReg);
+          const fps = output[i].match(fpsReg);
+          _width = wh[1];
+          _height = wh[2];
+          _fps = fps[1];
         }
         // Find time details line.
         if (output[i].indexOf('Duration:') >= 0 &&
           output[i].indexOf('start:') >= 0) {
+          console.log(output[i]);
           const timeDetails = output[i].split(',');
           const durationList = timeDetails[0].split(' ');
           const startList = timeDetails[1].split(' ');
