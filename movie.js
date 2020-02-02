@@ -169,8 +169,9 @@ const videoClip = {
         { name: 'Videos', extensions: videoExtensions },
         { name: 'All Files', extensions: ['*'] }
       ]
-    }, function(videoName) {
-      if (!videoName) return;
+    }).then(function(result) {
+      if (!result.filePaths) return;
+      var videoName = result.filePaths[0]
       _this.lastVideoPath = path.dirname(videoName);
       _this.LoadVideo(videoName);
       if (typeof callback === "function") {
@@ -192,7 +193,8 @@ const videoClip = {
         { name: 'GIFs', extensions: ['gif'] },
         { name: 'All Files', extensions: ['*'] }
       ],
-    }, function(gifname) {
+    }).then(function(results) {
+      var gifname = results.filePath
       if (!gifname) {
         return;
       }
