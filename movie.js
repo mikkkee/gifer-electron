@@ -201,7 +201,7 @@ const videoClip = {
     var gifname = "";
     if (preview) {
       gifname = "./temp.gif";
-      this.MakeGIF(gifname, callback);
+      this.MakeGIF(gifname, callback, preview);
     } else {
       dialog
         .showSaveDialog({
@@ -214,11 +214,11 @@ const videoClip = {
         })
         .then(function(results) {
           gifname = results.filePath;
-          _this.MakeGIF(gifname, callback);
+          _this.MakeGIF(gifname, callback, preview);
         });
     }
   },
-  MakeGIF: function(gifname, callback) {
+  MakeGIF: function(gifname, callback, preview) {
     // ffmpeg
     // -ss [start] -t [duration]
     // -i [input video]
@@ -229,7 +229,9 @@ const videoClip = {
     if (!gifname) {
       return;
     }
-    _this.lastGIFPath = path.dirname(gifname);
+    if (!preview) {
+      _this.lastGIFPath = path.dirname(gifname);
+    }
     // gifname may contain spaces. Need to wrap quotes around it.
     let gifnameCMD = gifname;
 
