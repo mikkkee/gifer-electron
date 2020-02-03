@@ -4,6 +4,7 @@
   "description": "A GIF maker built with electron",
   "main": "main.js",
   "scripts": {
+    "dev": "export NODE_ENV=development && electron main.js",
     "start": "electron main.js"
   },
   "repository": {

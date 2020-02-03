@@ -70,6 +70,7 @@ function BindEvents() {
   // Placehold text in holder.
   const dragText = document.getElementById('drag-text');
   const doScale = document.querySelector('#do-scale');
+  const previewBtn = document.querySelector('#preview-gif');
   const makeBtn = document.querySelector('#make-gif');
   const resetBtn = document.querySelector('#reset');
   const gvSwitch = document.querySelector('#gif-video-switch');
@@ -85,7 +86,8 @@ function BindEvents() {
 
   doScale.onchange = ToggleScale;
 
-  makeBtn.addEventListener('click', function() { videoClip.MakeGIF(UpdateGIF); });
+  makeBtn.addEventListener('click', function() { videoClip.PreviewOrMake(UpdateGIF, false); });
+  previewBtn.addEventListener('click', function() { videoClip.PreviewOrMake(UpdateGIF, true); });
   resetBtn.addEventListener('click', Reset);
   gvSwitch.addEventListener('click', function() { ToggleGV(event); });
 

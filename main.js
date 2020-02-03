@@ -17,10 +17,11 @@ let mainWindow, pids = [];
 function CreateWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 900,
+    width: process.env.NODE_ENV === 'development' ? 1400 : 900,
     height: 760,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      devTools: process.env.NODE_ENV === 'development'
     }
   });
   // Disable default menu at start.

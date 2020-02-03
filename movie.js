@@ -179,94 +179,86 @@ const videoClip = {
       }
     });
   },
-  MakeGIF: function(callback) {
+  PreviewOrMake: function(callback, preview){
+    var _this = this;
+    var gifname = '';
+    if (preview) {
+      gifname = './temp.gif'
+      this.MakeGIF(gifname, callback)
+    } else {
+      dialog.showSaveDialog({
+        title: 'hehe',
+        defaultPath: this.lastGIFPath,
+        filters: [
+          { name: 'GIFs', extensions: ['gif'] },
+          { name: 'All Files', extensions: ['*'] }
+        ],
+      }).then(function(results){
+        gifname = results.filePath
+        _this.MakeGIF(gifname, callback)
+      })
+    }
+  },
+  MakeGIF: function(gifname, callback) {
     // ffmpeg
     // -ss [start] -t [duration]
     // -i [input video]
     // -vf fps=[fps],scale=[width]:[height]:flags=lanczos,setpts=1/[speed]*PTS
     // output.gif
     const _this = this;
-    dialog.showSaveDialog({
-      title: 'hehe',
-      defaultPath: _this.lastGIFPath,
-      filters: [
-        { name: 'GIFs', extensions: ['gif'] },
-        { name: 'All Files', extensions: ['*'] }
-      ],
-    }).then(function(results) {
-      var gifname = results.filePath
-      if (!gifname) {
-        return;
-      }
-      _this.lastGIFPath = path.dirname(gifname);
-      // gifname may contain spaces. Need to wrap quotes around it.
-      let gifnameCMD = gifname;
 
-      const filters = 'fps=' + _this.fps + ',scale=' + _this.width + ':' + _this.height + ':flags=lanczos,' + 'setpts=1/' + _this.speed + '*PTS';
+    if (!gifname) {
+      return;
+    }
+    _this.lastGIFPath = path.dirname(gifname);
+    // gifname may contain spaces. Need to wrap quotes around it.
+    let gifnameCMD = gifname;
 
-      if (_this.highq) {
-        // Generate high quality GIF.
-        let _video = _this.video;
-        if (_this.platform === 'win32') { _video = _this.video.slice(1, -1); }
-        const palette = path.join(__dirname, './tmp.png');
-        const createPalette = ['-y', '-ss', _this.start, '-t', _this.Duration(),
-          '-i', _video, '-vf', filters+',palettegen', palette];
-        const usePalette = ['-y', '-ss', _this.start, '-t', _this.Duration(),
-          '-i', _video, '-i', palette,
-          '-lavfi', filters+' [x]; [x][1:v] paletteuse', gifnameCMD];
-        const paletteCreator = spawn(_this.ffmpeg, createPalette);
-        let paletteConsumer;
-        paletteCreator.on('exit', function(code, signal){
-          console.log('This is the end of creating palette.', this);
-          ipc.send('ffmpeg-end', paletteCreator.pid);
+    const filters = 'fps=' + _this.fps + ',scale=' + _this.width + ':' + _this.height + ':flags=lanczos,' + 'setpts=1/' + _this.speed + '*PTS';
 
-          paletteConsumer = spawn(_this.ffmpeg, usePalette);
-          paletteConsumer.stdout.on('data', function(data){console.log(data.toString());});
-          paletteConsumer.stderr.on('data', function(data){console.log(data.toString());});
-          paletteConsumer.on('exit', function(code, signal){
-            console.log('This is the end of creating gif.', this);
-            if (typeof callback === "function") {
-              callback(gifname);
-            }
-          });
+    if (_this.highq) {
+      // Generate high quality GIF.
+      let _video = _this.video;
+      if (_this.platform === 'win32') { _video = _this.video.slice(1, -1); }
+      const palette = path.join(__dirname, './tmp.png');
+      const createPalette = ['-y', '-ss', _this.start, '-t', _this.Duration(),
+        '-i', _video, '-vf', filters+',palettegen', palette];
+      const usePalette = ['-y', '-ss', _this.start, '-t', _this.Duration(),
+        '-i', _video, '-i', palette,
+        '-lavfi', filters+' [x]; [x][1:v] paletteuse', gifnameCMD];
+      const paletteCreator = spawn(_this.ffmpeg, createPalette);
+      let paletteConsumer;
+      paletteCreator.on('exit', function(code, signal){
+        console.log('This is the end of creating palette.', this);
+        ipc.send('ffmpeg-end', paletteCreator.pid);
 
-        });
-        paletteCreator.stdout.on('data', function(data){console.log(data.toString());});
-        paletteCreator.stderr.on('data', function(data){console.log(data.toString());});
-        ipc.send('ffmpeg-begin', paletteCreator.pid);
-/*
-        exec(_this.ffmpeg + createPalette, function(error, stdout, stderr) {
-          console.log('CREATE PALETTE\n');
-          console.log('ERROR: ', error);
-          console.log('STDOUT: ', stdout);
-          console.log('STDERR: ', stderr);
-          exec(_this.ffmpeg + usePalette, function(error, stdout, stderr) {
-            console.log('USE PALETTE\n');
-            console.log('ERROR: ', error);
-            console.log('STDOUT: ', stdout);
-            console.log('STDERR: ', stderr);
-            console.log('High Quality GIF convert finished!');
-            fs.unlink(palette);
-            if (typeof callback === "function") {
-              callback(gifname);
-            }
-          });
-        }); 
-*/
-      } else {
-        // Generate low quality GIF.
-        const options = ' -y -ss ' + _this.start + ' -t ' + _this.Duration() + ' -i ' + _this.video + ' -vf ' + '"' + filters + '"' + ' ' + gifnameCMD;
-        exec(_this.ffmpeg + options, function(error, stdout, stderr) {
-          console.log('ERROR: ', error);
-          console.log('STDOUT: ', stdout);
-          console.log('STDERR: ', stderr);
-          console.log('Low Quality GIF convert finished!');
+        paletteConsumer = spawn(_this.ffmpeg, usePalette);
+        paletteConsumer.stdout.on('data', function(data){console.log(data.toString());});
+        paletteConsumer.stderr.on('data', function(data){console.log(data.toString());});
+        paletteConsumer.on('exit', function(code, signal){
+          console.log('This is the end of creating gif.', this);
           if (typeof callback === "function") {
             callback(gifname);
           }
         });
-      }
-    });
+
+      });
+      paletteCreator.stdout.on('data', function(data){console.log(data.toString());});
+      paletteCreator.stderr.on('data', function(data){console.log(data.toString());});
+      ipc.send('ffmpeg-begin', paletteCreator.pid);
+    } else {
+      // Generate low quality GIF.
+      const options = ' -y -ss ' + _this.start + ' -t ' + _this.Duration() + ' -i ' + _this.video + ' -vf ' + '"' + filters + '"' + ' ' + gifnameCMD;
+      exec(_this.ffmpeg + options, function(error, stdout, stderr) {
+        console.log('ERROR: ', error);
+        console.log('STDOUT: ', stdout);
+        console.log('STDERR: ', stderr);
+        console.log('Low Quality GIF convert finished!');
+        if (typeof callback === "function") {
+          callback(gifname);
+        }
+      });
+    }
   },
   ParseTimeToSeconds: function(t) {
     const ts = t.toString();
