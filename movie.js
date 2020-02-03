@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
-const fs = require('fs');
-const os = require('os');
-const dialog = require('electron').remote.dialog;
-const exec = require('child_process').exec;
-const spawn = require('child_process').spawn;
-const ipc = require('electron').ipcRenderer;
-const path = require('path');
+const fs = require("fs");
+const os = require("os");
+const dialog = require("electron").remote.dialog;
+const exec = require("child_process").exec;
+const spawn = require("child_process").spawn;
+const ipc = require("electron").ipcRenderer;
+const path = require("path");
 
 const videoExtensions = [
   "3g2",
@@ -42,35 +42,42 @@ const videoExtensions = [
   "webm",
   "wmv",
   "yuv"
-]
+];
 
 const videoClip = {
-  video: '',
+  video: "",
   initWidth: 0,
   initHeight: 0,
   width: 0,
   height: 0,
-  start: '0',
-  initStart: '0',
-  end: '0',
-  initEnd: '0',
+  start: "0",
+  initStart: "0",
+  end: "0",
+  initEnd: "0",
   Duration: function() {
-    return this.ParseTimeToSeconds(this.end) - this.ParseTimeToSeconds(this.start);
+    return (
+      this.ParseTimeToSeconds(this.end) - this.ParseTimeToSeconds(this.start)
+    );
   },
   highq: false,
-  scale: '',
+  scale: "",
   fps: 0.0,
   initFps: 0.0,
   speed: 1.0,
   ratio: 0.0, // initWidth / initHeight.
   initRatio: 0.0,
   platform: os.platform(),
-  ffmpeg: os.platform() === 'win32' ? path.join(__dirname, '.\\bin\\ffmpeg.exe') : path.join(__dirname, './bin/ffmpeg'),
-  lastGIFPath: '.',
-  lastVideoPath: '.',
+  ffmpeg:
+    os.platform() === "win32"
+      ? path.join(__dirname, ".\\bin\\ffmpeg.exe")
+      : path.join(__dirname, "./bin/ffmpeg"),
+  lastGIFPath: ".",
+  lastVideoPath: ".",
   LoadVideo: function(path) {
     this.video = path;
-    if (this.platform === 'win32') { this.video = '"' + this.video + '"'; }
+    if (this.platform === "win32") {
+      this.video = '"' + this.video + '"';
+    }
     this.GetVideoInfo();
   },
   GetVideoInfo: function() {
@@ -80,17 +87,23 @@ const videoClip = {
     // "    Stream #0:1(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709), 856x480 [SAR 1:1 DAR 107:60], 1199 kb/s, 29.97 fps, 29.97 tbr, 60k tbn, 59.94 tbc (default)"
     const _this = this;
 
-    exec(this.ffmpeg + ' -i ' + this.video, function callback(error, stdout, stderr) {
+    exec(this.ffmpeg + " -i " + this.video, function callback(
+      error,
+      stdout,
+      stderr
+    ) {
       // console.log("error: ", error);
       // console.log("stdout: ", stdout);
       // console.log("stderr: ", stderr);
-      const output = stderr.split('\n');
+      const output = stderr.split("\n");
       let _width, _height, _fps, _start, _duration;
 
       for (let i = output.length - 1; i >= 0; --i) {
         // Find Video Stream description line.
-        if (output[i].indexOf('Stream #') >= 0 &&
-          output[i].indexOf('Video:') >= 0) {
+        if (
+          output[i].indexOf("Stream #") >= 0 &&
+          output[i].indexOf("Video:") >= 0
+        ) {
           const whReg = /(\d{1,4})x(\d{1,4})/;
           const fpsReg = /(\d{1,4}|\d{1,4}\.\d{1,4})\s{1,2}fps/;
           const wh = output[i].match(whReg);
@@ -100,12 +113,14 @@ const videoClip = {
           _fps = fps[1];
         }
         // Find time details line.
-        if (output[i].indexOf('Duration:') >= 0 &&
-          output[i].indexOf('start:') >= 0) {
+        if (
+          output[i].indexOf("Duration:") >= 0 &&
+          output[i].indexOf("start:") >= 0
+        ) {
           console.log(output[i]);
-          const timeDetails = output[i].split(',');
-          const durationList = timeDetails[0].split(' ');
-          const startList = timeDetails[1].split(' ');
+          const timeDetails = output[i].split(",");
+          const durationList = timeDetails[0].split(" ");
+          const startList = timeDetails[1].split(" ");
           _start = startList[startList.length - 1];
           _duration = durationList[durationList.length - 1];
         }
@@ -122,7 +137,7 @@ const videoClip = {
       _this.initEnd = _duration;
       _this.fps = _fps;
       _this.initFps = _fps;
-    })
+    });
   },
   SetWidth: function(w) {
     // Set width to w and keep aspect ratio unchanged.
@@ -157,46 +172,50 @@ const videoClip = {
     this.ratio = this.initRatio;
     this.fps = this.initFps;
     this.highq = false;
-    this.scale = '';
+    this.scale = "";
     this.speed = 1;
   },
   OpenVideoDialog: function(callback) {
     const _this = this;
-    dialog.showOpenDialog({
-      title: 'Select Video',
-      defaultPath: _this.lastVideoPath,
-      filters: [
-        { name: 'Videos', extensions: videoExtensions },
-        { name: 'All Files', extensions: ['*'] }
-      ]
-    }).then(function(result) {
-      if (!result.filePaths) return;
-      var videoName = result.filePaths[0]
-      _this.lastVideoPath = path.dirname(videoName);
-      _this.LoadVideo(videoName);
-      if (typeof callback === "function") {
-        callback(videoName);
-      }
-    });
-  },
-  PreviewOrMake: function(callback, preview){
-    var _this = this;
-    var gifname = '';
-    if (preview) {
-      gifname = './temp.gif'
-      this.MakeGIF(gifname, callback)
-    } else {
-      dialog.showSaveDialog({
-        title: 'hehe',
-        defaultPath: this.lastGIFPath,
+    dialog
+      .showOpenDialog({
+        title: "Select Video",
+        defaultPath: _this.lastVideoPath,
         filters: [
-          { name: 'GIFs', extensions: ['gif'] },
-          { name: 'All Files', extensions: ['*'] }
-        ],
-      }).then(function(results){
-        gifname = results.filePath
-        _this.MakeGIF(gifname, callback)
+          { name: "Videos", extensions: videoExtensions },
+          { name: "All Files", extensions: ["*"] }
+        ]
       })
+      .then(function(result) {
+        if (!result.filePaths) return;
+        var videoName = result.filePaths[0];
+        _this.lastVideoPath = path.dirname(videoName);
+        _this.LoadVideo(videoName);
+        if (typeof callback === "function") {
+          callback(videoName);
+        }
+      });
+  },
+  PreviewOrMake: function(callback, preview) {
+    var _this = this;
+    var gifname = "";
+    if (preview) {
+      gifname = "./temp.gif";
+      this.MakeGIF(gifname, callback);
+    } else {
+      dialog
+        .showSaveDialog({
+          title: "hehe",
+          defaultPath: this.lastGIFPath,
+          filters: [
+            { name: "GIFs", extensions: ["gif"] },
+            { name: "All Files", extensions: ["*"] }
+          ]
+        })
+        .then(function(results) {
+          gifname = results.filePath;
+          _this.MakeGIF(gifname, callback);
+        });
     }
   },
   MakeGIF: function(gifname, callback) {
@@ -214,46 +233,98 @@ const videoClip = {
     // gifname may contain spaces. Need to wrap quotes around it.
     let gifnameCMD = gifname;
 
-    const filters = 'fps=' + _this.fps + ',scale=' + _this.width + ':' + _this.height + ':flags=lanczos,' + 'setpts=1/' + _this.speed + '*PTS';
+    const filters =
+      "fps=" +
+      _this.fps +
+      ",scale=" +
+      _this.width +
+      ":" +
+      _this.height +
+      ":flags=lanczos," +
+      "setpts=1/" +
+      _this.speed +
+      "*PTS";
 
     if (_this.highq) {
       // Generate high quality GIF.
       let _video = _this.video;
-      if (_this.platform === 'win32') { _video = _this.video.slice(1, -1); }
-      const palette = path.join(__dirname, './tmp.png');
-      const createPalette = ['-y', '-ss', _this.start, '-t', _this.Duration(),
-        '-i', _video, '-vf', filters+',palettegen', palette];
-      const usePalette = ['-y', '-ss', _this.start, '-t', _this.Duration(),
-        '-i', _video, '-i', palette,
-        '-lavfi', filters+' [x]; [x][1:v] paletteuse', gifnameCMD];
+      if (_this.platform === "win32") {
+        _video = _this.video.slice(1, -1);
+      }
+      const palette = path.join(__dirname, "./tmp.png");
+      const createPalette = [
+        "-y",
+        "-ss",
+        _this.start,
+        "-t",
+        _this.Duration(),
+        "-i",
+        _video,
+        "-vf",
+        filters + ",palettegen",
+        palette
+      ];
+      const usePalette = [
+        "-y",
+        "-ss",
+        _this.start,
+        "-t",
+        _this.Duration(),
+        "-i",
+        _video,
+        "-i",
+        palette,
+        "-lavfi",
+        filters + " [x]; [x][1:v] paletteuse",
+        gifnameCMD
+      ];
       const paletteCreator = spawn(_this.ffmpeg, createPalette);
       let paletteConsumer;
-      paletteCreator.on('exit', function(code, signal){
-        console.log('This is the end of creating palette.', this);
-        ipc.send('ffmpeg-end', paletteCreator.pid);
+      paletteCreator.on("exit", function(code, signal) {
+        console.log("This is the end of creating palette.", this);
+        ipc.send("ffmpeg-end", paletteCreator.pid);
 
         paletteConsumer = spawn(_this.ffmpeg, usePalette);
-        paletteConsumer.stdout.on('data', function(data){console.log(data.toString());});
-        paletteConsumer.stderr.on('data', function(data){console.log(data.toString());});
-        paletteConsumer.on('exit', function(code, signal){
-          console.log('This is the end of creating gif.', this);
+        paletteConsumer.stdout.on("data", function(data) {
+          console.log(data.toString());
+        });
+        paletteConsumer.stderr.on("data", function(data) {
+          console.log(data.toString());
+        });
+        paletteConsumer.on("exit", function(code, signal) {
+          console.log("This is the end of creating gif.", this);
           if (typeof callback === "function") {
             callback(gifname);
           }
         });
-
       });
-      paletteCreator.stdout.on('data', function(data){console.log(data.toString());});
-      paletteCreator.stderr.on('data', function(data){console.log(data.toString());});
-      ipc.send('ffmpeg-begin', paletteCreator.pid);
+      paletteCreator.stdout.on("data", function(data) {
+        console.log(data.toString());
+      });
+      paletteCreator.stderr.on("data", function(data) {
+        console.log(data.toString());
+      });
+      ipc.send("ffmpeg-begin", paletteCreator.pid);
     } else {
       // Generate low quality GIF.
-      const options = ' -y -ss ' + _this.start + ' -t ' + _this.Duration() + ' -i ' + _this.video + ' -vf ' + '"' + filters + '"' + ' ' + gifnameCMD;
+      const options =
+        " -y -ss " +
+        _this.start +
+        " -t " +
+        _this.Duration() +
+        " -i " +
+        _this.video +
+        " -vf " +
+        '"' +
+        filters +
+        '"' +
+        " " +
+        gifnameCMD;
       exec(_this.ffmpeg + options, function(error, stdout, stderr) {
-        console.log('ERROR: ', error);
-        console.log('STDOUT: ', stdout);
-        console.log('STDERR: ', stderr);
-        console.log('Low Quality GIF convert finished!');
+        console.log("ERROR: ", error);
+        console.log("STDOUT: ", stdout);
+        console.log("STDERR: ", stderr);
+        console.log("Low Quality GIF convert finished!");
         if (typeof callback === "function") {
           callback(gifname);
         }
@@ -262,7 +333,7 @@ const videoClip = {
   },
   ParseTimeToSeconds: function(t) {
     const ts = t.toString();
-    const tsList = ts.split(':');
+    const tsList = ts.split(":");
     let seconds = 0;
     for (let i = tsList.length - 1; i >= 0; --i) {
       seconds += tsList[i] * Math.pow(60, tsList.length - 1 - i);
@@ -277,13 +348,13 @@ const videoClip = {
     minutes = Math.floor(t / 60) % 60;
     hours = Math.floor(t / 60 / 60) % 60;
     if (hours) {
-      return hours + ':' + minutes + ':' + seconds;
+      return hours + ":" + minutes + ":" + seconds;
     } else if (minutes) {
-      return minutes + ':' + seconds;
+      return minutes + ":" + seconds;
     } else {
       return seconds;
     }
-  },
+  }
 };
 
 module.exports = videoClip;
