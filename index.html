@@ -1,130 +1,189 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self'" />
+    <title>GIFer</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="node_modules/grd/dist/grd.css"
+    />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script src="node_modules/bind.js/dist/bind.min.js"></script>
+    <script src="gifer.js"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="script-src 'self'">
-  <title>GIFer</title>
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" type="text/css" href="node_modules/grd/dist/grd.css">
-  <link rel="stylesheet" type="text/css" href="style.css">
-  <script src="node_modules/bind.js/dist/bind.min.js"></script>
-  <script src="gifer.js"></script>
-</head>
-
-<body>
-  <div class="wrapper">
-    <div id="holder">
-      <video class="hidden" controls></video>
-      <div id='drag-text'>Drag video file here!</div>
-      <div id="gif" class="hidden"></div>
-    </div>
-    <div class="Grid options-wrapper -left">
-      <!-- Video File -->
-      <div class="Cell -12of12">
-        <div class="Grid option-cell">
-          <label for="video-input" class="Cell -2of12 option-label">Video File</label>
-          <input type="text" id="video-input" class="option-text Cell -10of12" />
-        </div>
+  <body>
+    <div class="wrapper">
+      <div id="holder">
+        <video class="hidden" controls></video>
+        <div id="drag-text">Drag video file here!</div>
+        <div id="gif" class="hidden"></div>
       </div>
-      <!-- GIF Duration -->
-      <div class="Cell -4of12" id="start">
-        <div class="Grid option-cell">
-          <label for="start-input" class="Cell -6of12 option-label">Start Time (s)</label>
-          <input type="text" id="start-input" class="option-text Cell -6of12" />
+      <div class="Grid options-wrapper -left">
+        <!-- Video File -->
+        <div class="Cell -12of12">
+          <div class="Grid option-cell">
+            <label for="video-input" class="Cell -2of12 option-label"
+              >Video File</label
+            >
+            <input
+              type="text"
+              id="video-input"
+              class="option-text Cell -10of12"
+            />
+          </div>
         </div>
-      </div>
-      <div class="Cell -4of12" id="end">
-        <div class="Grid option-cell">
-          <label for="end-input" class="Cell -6of12 option-label">End Time (s)</label>
-          <input type="text" id="end-input" class="option-text Cell -6of12" />
+        <!-- GIF Duration -->
+        <div class="Cell -4of12" id="start">
+          <div class="Grid option-cell">
+            <label for="start-input" class="Cell -6of12 option-label"
+              >Start Time (s)</label
+            >
+            <input
+              type="text"
+              id="start-input"
+              class="option-text Cell -6of12"
+            />
+          </div>
         </div>
-      </div>
-      <div class="Cell -4of12" id="duration">
-        <div class="Grid option-cell">
-          <label for="duration-input" class="Cell -6of12 option-label">Duration (s)</label>
-          <input type="text" id="duration-input" class="option-text Cell -6of12" disabled/>
+        <div class="Cell -4of12" id="end">
+          <div class="Grid option-cell">
+            <label for="end-input" class="Cell -6of12 option-label"
+              >End Time (s)</label
+            >
+            <input type="text" id="end-input" class="option-text Cell -6of12" />
+          </div>
         </div>
-      </div>
-      <!-- GIF size -->
-      <div class="Cell -4of12" id="width">
-        <div class="Grid option-cell">
-          <label for="width-input" class="Cell -6of12 option-label">Width (px)</label>
-          <input type="text" id="width-input" class="option-text Cell -6of12" />
+        <div class="Cell -4of12" id="duration">
+          <div class="Grid option-cell">
+            <label for="duration-input" class="Cell -6of12 option-label"
+              >Duration (s)</label
+            >
+            <input
+              type="text"
+              id="duration-input"
+              class="option-text Cell -6of12"
+              disabled
+            />
+          </div>
         </div>
-      </div>
-      <div class="Cell -4of12" id="height">
-        <div class="Grid option-cell">
-          <label for="height-input" class="Cell -6of12 option-label">Height (px)</label>
-          <input type="text" id="height-input" class="option-text Cell -6of12" />
+        <!-- GIF size -->
+        <div class="Cell -4of12" id="width">
+          <div class="Grid option-cell">
+            <label for="width-input" class="Cell -6of12 option-label"
+              >Width (px)</label
+            >
+            <input
+              type="text"
+              id="width-input"
+              class="option-text Cell -6of12"
+            />
+          </div>
         </div>
-      </div>
-      <div class="Cell -4of12" id="scale">
-        <div class="Grid option-cell">
-          <div class="Cell -4of12 option-label">
-            <div class="checkbox-round">
-              <input type="checkbox" id="do-scale" name="" />
-              <label for="do-scale"></label>
+        <div class="Cell -4of12" id="height">
+          <div class="Grid option-cell">
+            <label for="height-input" class="Cell -6of12 option-label"
+              >Height (px)</label
+            >
+            <input
+              type="text"
+              id="height-input"
+              class="option-text Cell -6of12"
+            />
+          </div>
+        </div>
+        <div class="Cell -4of12" id="scale">
+          <div class="Grid option-cell">
+            <div class="Cell -4of12 option-label">
+              <div class="checkbox-round">
+                <input type="checkbox" id="do-scale" name="" />
+                <label for="do-scale"></label>
+              </div>
+            </div>
+            <div class="Cell -2of12 option-label">
+              <label for="do-scale">Scale</label>
+            </div>
+            <input
+              type="text"
+              id="scale-input"
+              class="option-text Cell -6of12"
+              disabled
+            />
+          </div>
+        </div>
+        <!-- GIF quality -->
+        <div class="Cell -4of12" id="fps">
+          <div class="Grid option-cell">
+            <label for="fps-input" class="Cell -6of12 option-label">FPS</label>
+            <input type="text" id="fps-input" class="option-text Cell -6of12" />
+          </div>
+        </div>
+        <div class="Cell -4of12" id="speed">
+          <div class="Grid option-cell">
+            <label for="speed-input" class="Cell -6of12 option-label"
+              >Speed</label
+            >
+            <input
+              type="text"
+              id="speed-input"
+              class="option-text Cell -6of12"
+            />
+          </div>
+        </div>
+        <div class="Cell -4of12" id="highq">
+          <div class="Grid option-cell">
+            <div class="Cell -4of12 option-label">
+              <div class="checkbox-round">
+                <input type="checkbox" id="do-highq" name="" />
+                <label for="do-highq"></label>
+              </div>
+            </div>
+            <div class="Cell -8of12 option-label right">
+              <label for="do-highq">High Quality</label>
             </div>
           </div>
-          <div class="Cell -2of12 option-label">
-            <label for="do-scale">Scale</label>
-          </div>
-          <input type="text" id="scale-input" class="option-text Cell -6of12" disabled/>
         </div>
-      </div>
-      <!-- GIF quality -->
-      <div class="Cell -4of12" id="fps">
-        <div class="Grid option-cell">
-          <label for="fps-input" class="Cell -6of12 option-label">FPS</label>
-          <input type="text" id="fps-input" class="option-text Cell -6of12" />
-        </div>
-      </div>
-      <div class="Cell -4of12" id="speed">
-        <div class="Grid option-cell">
-          <label for="speed-input" class="Cell -6of12 option-label">Speed</label>
-          <input type="text" id="speed-input" class="option-text Cell -6of12" />
-        </div>
-      </div>
-      <div class="Cell -4of12" id="highq">
-        <div class="Grid option-cell">
-          <div class="Cell -4of12 option-label">
-            <div class="checkbox-round">
-              <input type="checkbox" id="do-highq" name="" />
-              <label for="do-highq"></label>
+        <div class="Cell -12of12">
+          <div class="Grid -right buttons-area">
+            <div class="onoffswitch Cell -4of12 even-btn-left">
+              <input
+                type="checkbox"
+                name="onoffswitch"
+                class="onoffswitch-checkbox"
+                id="gif-video-switch"
+                checked
+              />
+              <label class="onoffswitch-label" for="gif-video-switch">
+                <span class="onoffswitch-inner"></span>
+                <span class="onoffswitch-switch"></span>
+              </label>
+            </div>
+            <div class=" Cell -4of12 even-btn-mid">
+              <button class=" button button-blue-outline" id="reset">
+                Reset
+              </button>
+            </div>
+            <div class=" Cell -2of12 even-btn-right">
+              <button class="button button-blue" id="preview-gif">
+                Preview
+              </button>
+            </div>
+            <div class=" Cell -2of12 even-btn-right">
+              <button class="button button-blue" id="make-gif">Save</button>
             </div>
           </div>
-          <div class="Cell -8of12 option-label right">
-            <label for="do-highq">High Quality</label>
-          </div>
         </div>
       </div>
-      <div class="Cell -12of12">
-        <div class="Grid -right buttons-area">
-          <div class="onoffswitch Cell -4of12 even-btn-left">
-            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="gif-video-switch" checked>
-            <label class="onoffswitch-label" for="gif-video-switch">
-              <span class="onoffswitch-inner"></span>
-              <span class="onoffswitch-switch"></span>
-            </label>
-          </div>
-          <div class=" Cell -4of12 even-btn-mid">
-            <button class=" button button-blue-outline" id='reset'>Reset</button>
-          </div>
-          <div class=" Cell -2of12 even-btn-right">
-            <button class="button button-blue" id='preview-gif'>Preview</button>
-          </div>
-          <div class=" Cell -2of12 even-btn-right">
-            <button class="button button-blue" id='make-gif'>Save</button>
-          </div>
-        </div>
+      <div class="footer Cell -fill">
+        <div class="Grid -left"></div>
       </div>
     </div>
-    <div class="footer Cell -fill">
-      <div class="Grid -left">
-      </div>
-    </div>
-  </div>
-</body>
-
+  </body>
 </html>
