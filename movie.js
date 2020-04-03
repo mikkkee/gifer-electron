@@ -76,10 +76,7 @@ const videoClip = {
   lastGIFPath: ".",
   lastVideoPath: ".",
   LoadVideo: function (path) {
-    this.video = path;
-    if (this.platform === "win32") {
-      this.video = '"' + this.video + '"';
-    }
+    this.video = '"' + path + '"';
     this.GetVideoInfo();
   },
   GetVideoInfo: function () {
@@ -106,7 +103,8 @@ const videoClip = {
           output[i].indexOf("Stream #") >= 0 &&
           output[i].indexOf("Video:") >= 0
         ) {
-          const whReg = /(\d{1,4})x(\d{1,4})/;
+          console.log("VideoInfo", output[i]);
+          const whReg = /\s(\d{1,4})x(\d{1,4})\s/;
           const fpsReg = /(\d{1,4}|\d{1,4}\.\d{1,4})\s{1,2}fps/;
           const wh = output[i].match(whReg);
           const fps = output[i].match(fpsReg);
@@ -251,10 +249,7 @@ const videoClip = {
 
     if (_this.highq) {
       // Generate high quality GIF.
-      let _video = _this.video;
-      if (_this.platform === "win32") {
-        _video = _this.video.slice(1, -1);
-      }
+      let _video = _this.video.replace(/"/g, '');
       const palette = path.join(__dirname, "./tmp.png");
       const createPalette = [
         "-y",

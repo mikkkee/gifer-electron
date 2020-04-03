@@ -6,7 +6,6 @@ const app = electron.app;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
 const Menu = electron.Menu;
-const MenuItem = electron.MenuItem;
 // Module to listen to msgs.
 const ipc = electron.ipcMain;
 
