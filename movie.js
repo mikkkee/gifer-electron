@@ -7,7 +7,7 @@ const exec = require("child_process").exec;
 const spawn = require("child_process").spawn;
 const ipc = require("electron").ipcRenderer;
 const path = require("path");
-const ffbinaries = require('ffbinaries')
+const ffbinaries = require("ffbinaries");
 
 const videoExtensions = [
   "3g2",
@@ -42,7 +42,7 @@ const videoExtensions = [
   "vob",
   "webm",
   "wmv",
-  "yuv"
+  "yuv",
 ];
 
 const videoClip = {
@@ -55,7 +55,7 @@ const videoClip = {
   initStart: "0",
   end: "0",
   initEnd: "0",
-  Duration: function() {
+  Duration: function () {
     return (
       this.ParseTimeToSeconds(this.end) - this.ParseTimeToSeconds(this.start)
     );
@@ -68,21 +68,21 @@ const videoClip = {
   ratio: 0.0, // initWidth / initHeight.
   initRatio: 0.0,
   platform: os.platform(),
-  ffmpegPath: function(){},
+  ffmpegPath: function () {},
   ffmpeg:
     os.platform() === "win32"
       ? path.join(__dirname, ".\\bin\\ffmpeg.exe")
       : path.join(__dirname, "./bin/ffmpeg"),
   lastGIFPath: ".",
   lastVideoPath: ".",
-  LoadVideo: function(path) {
+  LoadVideo: function (path) {
     this.video = path;
     if (this.platform === "win32") {
       this.video = '"' + this.video + '"';
     }
     this.GetVideoInfo();
   },
-  GetVideoInfo: function() {
+  GetVideoInfo: function () {
     // Get detailed video info by calling ffmpeg.
     // STDERR example:
     // "  Duration: 03:09:49.62, start: 0.000000, bitrate: 1328 kb/s"
@@ -141,32 +141,32 @@ const videoClip = {
       _this.initFps = _fps;
     });
   },
-  SetWidth: function(w) {
+  SetWidth: function (w) {
     // Set width to w and keep aspect ratio unchanged.
     this.width = w;
     this.height = this.width / this.ratio;
     return this;
   },
-  SetHeight: function(h) {
+  SetHeight: function (h) {
     // Set Height to h and keep aspect ratio unchanged.
     this.height = h;
     this.weight = this.height * this.ratio;
     return this;
   },
-  SetScale: function(s) {
+  SetScale: function (s) {
     this.scale = s;
     this.width = this.initWidth * this.scale;
     this.height = this.initHeight * this.scale;
     return this;
   },
-  UpdateWithScale: function() {
+  UpdateWithScale: function () {
     if (this.scale) {
       this.width = this.initWidth * this.scale;
       this.height = this.initHeight * this.scale;
     }
     return this;
   },
-  Reset: function() {
+  Reset: function () {
     this.height = this.initHeight;
     this.width = this.initWidth;
     this.start = this.initStart;
@@ -177,7 +177,7 @@ const videoClip = {
     this.scale = "";
     this.speed = 1;
   },
-  OpenVideoDialog: function(callback) {
+  OpenVideoDialog: function (callback) {
     const _this = this;
     dialog
       .showOpenDialog({
@@ -185,10 +185,10 @@ const videoClip = {
         defaultPath: _this.lastVideoPath,
         filters: [
           { name: "Videos", extensions: videoExtensions },
-          { name: "All Files", extensions: ["*"] }
-        ]
+          { name: "All Files", extensions: ["*"] },
+        ],
       })
-      .then(function(result) {
+      .then(function (result) {
         if (!result.filePaths) return;
         var videoName = result.filePaths[0];
         _this.lastVideoPath = path.dirname(videoName);
@@ -198,7 +198,7 @@ const videoClip = {
         }
       });
   },
-  PreviewOrMake: function(callback, preview) {
+  PreviewOrMake: function (callback, preview) {
     var _this = this;
     var gifname = "";
     if (preview) {
@@ -211,16 +211,16 @@ const videoClip = {
           defaultPath: this.lastGIFPath,
           filters: [
             { name: "GIFs", extensions: ["gif"] },
-            { name: "All Files", extensions: ["*"] }
-          ]
+            { name: "All Files", extensions: ["*"] },
+          ],
         })
-        .then(function(results) {
+        .then(function (results) {
           gifname = results.filePath;
           _this.MakeGIF(gifname, callback, preview);
         });
     }
   },
-  MakeGIF: function(gifname, callback, preview) {
+  MakeGIF: function (gifname, callback, preview) {
     // ffmpeg
     // -ss [start] -t [duration]
     // -i [input video]
@@ -266,7 +266,7 @@ const videoClip = {
         _video,
         "-vf",
         filters + ",palettegen",
-        palette
+        palette,
       ];
       const usePalette = [
         "-y",
@@ -280,32 +280,32 @@ const videoClip = {
         palette,
         "-lavfi",
         filters + " [x]; [x][1:v] paletteuse",
-        gifnameCMD
+        gifnameCMD,
       ];
       const paletteCreator = spawn(_this.ffmpeg, createPalette);
       let paletteConsumer;
-      paletteCreator.on("exit", function(code, signal) {
+      paletteCreator.on("exit", function (code, signal) {
         console.log("This is the end of creating palette.", this);
         ipc.send("ffmpeg-end", paletteCreator.pid);
 
         paletteConsumer = spawn(_this.ffmpeg, usePalette);
-        paletteConsumer.stdout.on("data", function(data) {
+        paletteConsumer.stdout.on("data", function (data) {
           console.log(data.toString());
         });
-        paletteConsumer.stderr.on("data", function(data) {
+        paletteConsumer.stderr.on("data", function (data) {
           console.log(data.toString());
         });
-        paletteConsumer.on("exit", function(code, signal) {
+        paletteConsumer.on("exit", function (code, signal) {
           console.log("This is the end of creating gif.", this);
           if (typeof callback === "function") {
             callback(gifname);
           }
         });
       });
-      paletteCreator.stdout.on("data", function(data) {
+      paletteCreator.stdout.on("data", function (data) {
         console.log(data.toString());
       });
-      paletteCreator.stderr.on("data", function(data) {
+      paletteCreator.stderr.on("data", function (data) {
         console.log(data.toString());
       });
       ipc.send("ffmpeg-begin", paletteCreator.pid);
@@ -324,7 +324,7 @@ const videoClip = {
         '"' +
         " " +
         gifnameCMD;
-      exec(_this.ffmpeg + options, function(error, stdout, stderr) {
+      exec(_this.ffmpeg + options, function (error, stdout, stderr) {
         console.log("ERROR: ", error);
         console.log("STDOUT: ", stdout);
         console.log("STDERR: ", stderr);
@@ -335,7 +335,7 @@ const videoClip = {
       });
     }
   },
-  ParseTimeToSeconds: function(t) {
+  ParseTimeToSeconds: function (t) {
     const ts = t.toString();
     const tsList = ts.split(":");
     let seconds = 0;
@@ -344,7 +344,7 @@ const videoClip = {
     }
     return seconds;
   },
-  ParseSecondsToTime: function(t) {
+  ParseSecondsToTime: function (t) {
     let seconds = 0;
     let minutes = 0;
     let hours = 0;
@@ -358,7 +358,7 @@ const videoClip = {
     } else {
       return seconds;
     }
-  }
+  },
 };
 
 module.exports = videoClip;

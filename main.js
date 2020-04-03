@@ -22,8 +22,8 @@ function CreateWindow() {
     height: 760,
     webPreferences: {
       nodeIntegration: true,
-      devTools: process.env.NODE_ENV === "development"
-    }
+      devTools: process.env.NODE_ENV === "development",
+    },
   });
   // Disable default menu at start.
   const menu = new Menu();
@@ -34,7 +34,7 @@ function CreateWindow() {
   mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
-  mainWindow.on("closed", function() {
+  mainWindow.on("closed", function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
@@ -44,11 +44,11 @@ function CreateWindow() {
 
 // Listen to FFMPEG begin and end events.
 function CreateFFMPEGListeners() {
-  ipc.on("ffmpeg-begin", function(event, arg) {
+  ipc.on("ffmpeg-begin", function (event, arg) {
     console.log("ffmpeg-begin ", arg);
     pids.push(arg);
   });
-  ipc.on("ffmpeg-end", function(event, arg) {
+  ipc.on("ffmpeg-end", function (event, arg) {
     console.log("ffmpeg-end ", arg);
     if (pids.indexOf(arg) > -1) pids.splice(pids.indexOf(arg), 1);
   });
@@ -59,13 +59,13 @@ function KillFFMPEG() {}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-app.on("ready", function() {
+app.on("ready", function () {
   CreateWindow();
   CreateFFMPEGListeners();
 });
 
 // Quit when all windows are closed.
-app.on("window-all-closed", function() {
+app.on("window-all-closed", function () {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== "darwin") {
@@ -74,11 +74,11 @@ app.on("window-all-closed", function() {
 });
 
 // Kill all subprocesses when quiting.
-app.on("will-quit", function() {
+app.on("will-quit", function () {
   KillFFMPEG();
 });
 
-app.on("activate", function() {
+app.on("activate", function () {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {

@@ -21,12 +21,12 @@ function CreateMenu() {
         {
           label: "Open Video",
           accelerator: "CmdOrCtrl+O",
-          click: function(item, win) {
+          click: function (item, win) {
             LoadVideo();
-          }
-        }
-      ]
-    }
+          },
+        },
+      ],
+    },
   ];
 
   if (process.platform == "darwin") {
@@ -36,44 +36,44 @@ function CreateMenu() {
       submenu: [
         {
           label: "About " + name,
-          role: "about"
+          role: "about",
         },
         {
-          type: "separator"
+          type: "separator",
         },
         {
           label: "Services",
           role: "services",
-          submenu: []
+          submenu: [],
         },
         {
-          type: "separator"
+          type: "separator",
         },
         {
           label: "Hide " + name,
           accelerator: "Command+H",
-          role: "hide"
+          role: "hide",
         },
         {
           label: "Hide Others",
           accelerator: "Command+Alt+H",
-          role: "hideothers"
+          role: "hideothers",
         },
         {
           label: "Show All",
-          role: "unhide"
+          role: "unhide",
         },
         {
-          type: "separator"
+          type: "separator",
         },
         {
           label: "Quit",
           accelerator: "Command+Q",
-          click: function() {
+          click: function () {
             app.quit();
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
   }
 
@@ -103,14 +103,14 @@ function BindEvents() {
 
   doScale.onchange = ToggleScale;
 
-  makeBtn.addEventListener("click", function() {
+  makeBtn.addEventListener("click", function () {
     videoClip.PreviewOrMake(UpdateGIF, false);
   });
-  previewBtn.addEventListener("click", function() {
+  previewBtn.addEventListener("click", function () {
     videoClip.PreviewOrMake(UpdateGIF, true);
   });
   resetBtn.addEventListener("click", Reset);
-  gvSwitch.addEventListener("click", function() {
+  gvSwitch.addEventListener("click", function () {
     ToggleGV(event);
   });
 
@@ -120,21 +120,21 @@ function BindEvents() {
       "clip.video": "input#video-input",
       "clip.start": {
         dom: "input#start-input",
-        callback: CalDuration
+        callback: CalDuration,
       },
       "clip.end": {
         dom: "input#end-input",
-        callback: CalDuration
+        callback: CalDuration,
       },
       "clip.width": "input#width-input",
       "clip.height": "input#height-input",
       "clip.scale": {
         dom: "input#scale-input",
-        callback: videoClip.UpdateWithScale
+        callback: videoClip.UpdateWithScale,
       },
       "clip.fps": "input#fps-input",
       "clip.speed": "input#speed-input",
-      "clip.highq": "input#do-highq"
+      "clip.highq": "input#do-highq",
     }
   );
 }
@@ -213,7 +213,7 @@ function AfterLoadingVideo(videoFile) {
   if (video.classList.contains("hidden")) {
     video.classList.remove("hidden");
   }
-  setTimeout(function() {
+  setTimeout(function () {
     if (!video.videoWidth) VideoError("Cannot play video");
   }, 500);
 }
@@ -229,7 +229,7 @@ function LoadVideoFromDrop(e) {
   video.src = file.path;
   dragText.className += " hidden";
   video.classList.remove("hidden");
-  setTimeout(function() {
+  setTimeout(function () {
     if (!video.videoWidth) VideoError("Cannot play video");
   }, 500);
 }
