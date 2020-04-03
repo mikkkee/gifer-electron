@@ -7,6 +7,7 @@ const exec = require("child_process").exec;
 const spawn = require("child_process").spawn;
 const ipc = require("electron").ipcRenderer;
 const path = require("path");
+const ffbinaries = require('ffbinaries')
 
 const videoExtensions = [
   "3g2",
@@ -67,6 +68,7 @@ const videoClip = {
   ratio: 0.0, // initWidth / initHeight.
   initRatio: 0.0,
   platform: os.platform(),
+  ffmpegPath: function(){},
   ffmpeg:
     os.platform() === "win32"
       ? path.join(__dirname, ".\\bin\\ffmpeg.exe")
