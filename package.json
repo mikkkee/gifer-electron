@@ -24,14 +24,14 @@
   "homepage": "https://github.com/mikkkee/gifer-electron",
   "devDependencies": {
     "bind.js": ">=1.1.0",
-    "electron": ">=9.1.0",
+    "electron": ">=9.3.0",
     "electron-packager": "^15.0.0",
     "grd": ">=1.4.0",
     "lodash": ">=4.17.19"
   },
   "dependencies": {
     "bind.js": ">=1.1.0",
-    "electron": ">=9.1.0",
+    "electron": ">=9.3.0",
     "ffbinaries": ">=1.1.4",
     "lodash": ">=4.17.19"
   }
